@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HORAS · Viconik</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;700&family=Playfair+Display:ital@0;1&display=swap" rel="stylesheet">
+<style>
+:root{
+  --k:#111010; --w:#EDEBE7; --g:#8a8780;
+  --line: rgba(237,235,231,0.14);
+  --line-soft: rgba(237,235,231,0.08);
+  --accent:#c44a3a;      /* cronómetro activo / alerta */
+  --accent-ok:#6c9e7a;   /* dentro de presupuesto */
+  --accent-warn:#d4a13a; /* cerca del límite */
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  background:var(--k); color:var(--w);
+  font-family:'DM Sans',sans-serif; font-weight:300;
+  display:flex; min-height:100vh;
+}
+::selection{background:var(--w);color:var(--k)}
+h1,h2,h3{font-family:'Bebas Neue',sans-serif; letter-spacing:0.02em; font-weight:400}
+.mono{font-family:'DM Mono',monospace}
+.label{
+  font-family:'DM Mono',monospace; font-size:11px; text-transform:uppercase;
+  letter-spacing:0.12em; color:var(--g);
+}
+
+/* ---------- SIDEBAR ---------- */
+.sidebar{
+  width:220px; flex-shrink:0; height:100vh; position:sticky; top:0;
+  border-right:1px solid var(--line); padding:28px 22px; display:flex; flex-direction:column;
+}
+.brand{margin-bottom:44px}
+.brand .vk{font-family:'Playfair Display',serif; font-style:italic; font-size:22px; letter-spacing:0.02em}
+.brand .sub{font-family:'DM Mono',monospace; font-size:10px; color:var(--g); text-transform:uppercase; letter-spacing:0.15em; margin-top:4px}
+nav{display:flex; flex-direction:column; gap:2px}
+nav button{
+  all:unset; cursor:pointer; padding:11px 10px; font-family:'DM Mono',monospace; font-size:12px;
+  text-transform:uppercase; letter-spacing:0.1em; color:var(--g); border-left:2px solid transparent;
+  transition:all .15s;
+}
+nav button:hover{color:var(--w)}
+nav button.on{color:var(--w); border-left-color:var(--w); background:var(--line-soft)}
+.sidebar-foot{margin-top:auto; padding-top:20px; border-top:1px solid var(--line)}
+.tagline{font-family:'Playfair Display',serif; font-style:italic; font-size:11px; color:var(--g); line-height:1.5}
+
+/* ---------- MAIN ---------- */
+main{flex:1; padding:36px 44px; max-width:1180px}
+.view{display:none}
+.view.on{display:block}
+.view-head{display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:28px; gap:20px; flex-wrap:wrap}
+.view-head h1{font-size:36px}
+
+.btn{
+  all:unset; cursor:pointer; font-family:'DM Mono',monospace; font-size:11px; text-transform:uppercase;
+  letter-spacing:0.1em; padding:10px 18px; border:1px solid var(--w); color:var(--w); transition:all .15s;
+}
+.btn:hover{background:var(--w); color:var(--k)}
+.btn.primary{background:var(--w); color:var(--k)}
+.btn.primary:hover{background:transparent; color:var(--w)}
+.btn.danger{border-color:var(--accent); color:var(--accent)}
+.btn.danger:hover{background:var(--accent); color:var(--w)}
+.btn.small{padding:6px 12px; font-size:10px}
+.btn.ghost{border-color:transparent; color:var(--g)}
+.btn.ghost:hover{color:var(--w); background:transparent}
+
+/* ---------- CRONÓMETRO ---------- */
+.timer-card{
+  border:1px solid var(--line); padding:40px; display:flex; flex-direction:column; align-items:center;
+  gap:18px; margin-bottom:36px; position:relative;
+}
+.timer-card.running{border-color:var(--accent)}
+.rec-dot{width:8px;height:8px;border-radius:50%;background:var(--accent); display:inline-block; animation:pulse 1.4s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}
+.timer-active-label{display:flex; align-items:center; gap:8px}
+.timer-display{font-family:'Bebas Neue',sans-serif; font-size:88px; line-height:1; letter-spacing:0.02em}
+.timer-task{font-size:15px; color:var(--w)}
+.timer-project{font-family:'DM Mono',monospace; font-size:11px; color:var(--g); text-transform:uppercase; letter-spacing:0.1em}
+.timer-controls{display:flex; gap:14px; align-items:center; margin-top:6px}
+.timer-warning{
+  font-family:'DM Mono',monospace; font-size:11px; color:var(--accent-warn); text-transform:uppercase;
+  letter-spacing:0.08em; margin-top:4px;
+}
+select, input, textarea{
+  background:transparent; border:1px solid var(--line); color:var(--w); font-family:'DM Sans',sans-serif;
+  font-size:14px; padding:10px 12px; width:100%;
+}
+select:focus, input:focus, textarea:focus{outline:none; border-color:var(--w)}
+.picker-row{display:flex; gap:12px; width:100%; max-width:640px}
+.picker-row > *{flex:1}
+
+.entries{margin-top:8px}
+.entry{
+  display:grid; grid-template-columns:1fr 1fr 110px 90px 40px; gap:14px; align-items:center;
+  padding:14px 0; border-bottom:1px solid var(--line-soft); font-size:13px;
+}
+.entry-head{color:var(--g); font-family:'DM Mono',monospace; font-size:10px; text-transform:uppercase; letter-spacing:0.1em}
+.entry .cat{
+  font-family:'DM Mono',monospace; font-size:10px; text-transform:uppercase; letter-spacing:0.08em; color:var(--g);
+}
+.entry .dur{font-family:'DM Mono',monospace; text-align:right}
+.entry .del{color:var(--g); cursor:pointer; text-align:right}
+.entry .del:hover{color:var(--accent)}
+
+/* ---------- PROYECTOS ---------- */
+.proj-grid{display:grid; gap:14px}
+.proj-card{border:1px solid var(--line); padding:22px}
+.proj-top{display:flex; justify-content:space-between; align-items:flex-start; gap:16px; cursor:pointer}
+.proj-name{font-size:19px}
+.proj-client{font-family:'DM Mono',monospace; font-size:11px; color:var(--g); text-transform:uppercase; letter-spacing:0.08em; margin-top:2px}
+.proj-meta{text-align:right; font-family:'DM Mono',monospace; font-size:12px; color:var(--g)}
+.bar-track{height:4px; background:var(--line-soft); margin-top:14px; position:relative}
+.bar-fill{height:100%; background:var(--w)}
+.bar-fill.warn{background:var(--accent-warn)}
+.bar-fill.over{background:var(--accent)}
+.proj-tasks{margin-top:18px; padding-top:18px; border-top:1px solid var(--line-soft); display:none}
+.proj-tasks.on{display:block}
+.task-row{display:grid; grid-template-columns:1fr 130px 90px 80px 30px; gap:10px; align-items:center; padding:9px 0; font-size:13px; border-bottom:1px solid var(--line-soft)}
+.task-row .cat{font-family:'DM Mono',monospace; font-size:10px; color:var(--g); text-transform:uppercase}
+.pill{font-family:'DM Mono',monospace; font-size:10px; text-transform:uppercase; letter-spacing:0.06em; padding:3px 8px; border:1px solid var(--line); color:var(--g); display:inline-block}
+.pill.on-track{color:var(--accent-ok); border-color:var(--accent-ok)}
+.new-task-row{display:flex; gap:8px; margin-top:12px}
+
+/* ---------- INFORMES ---------- */
+.cards-row{display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:16px; margin-bottom:36px}
+.stat-card{border:1px solid var(--line); padding:20px}
+.stat-num{font-family:'Bebas Neue',sans-serif; font-size:42px}
+.chart-block{margin-bottom:40px}
+.chart-row{display:grid; grid-template-columns:150px 1fr 70px; gap:14px; align-items:center; padding:9px 0}
+.chart-bar-track{height:14px; background:var(--line-soft)}
+.chart-bar-fill{height:100%; background:var(--w)}
+table.report{width:100%; border-collapse:collapse; font-size:13px}
+table.report th{text-align:left; font-family:'DM Mono',monospace; font-size:10px; text-transform:uppercase; letter-spacing:0.08em; color:var(--g); padding:10px 8px; border-bottom:1px solid var(--line)}
+table.report td{padding:12px 8px; border-bottom:1px solid var(--line-soft)}
+table.report tr:hover td{background:var(--line-soft)}
+
+/* ---------- SEMANA ---------- */
+.week-nav{display:flex; align-items:center; gap:16px; margin-bottom:24px}
+.week-grid{display:grid; grid-template-columns:repeat(7,1fr); gap:10px}
+.day-col{border:1px solid var(--line); min-height:120px; padding:12px}
+.day-head{font-family:'DM Mono',monospace; font-size:10px; text-transform:uppercase; color:var(--g); letter-spacing:0.08em; margin-bottom:10px}
+.day-entry{font-size:11px; padding:6px 0; border-bottom:1px solid var(--line-soft)}
+.day-entry .t{color:var(--g); font-family:'DM Mono',monospace; font-size:10px}
+.day-total{margin-top:8px; font-family:'DM Mono',monospace; font-size:11px; color:var(--w)}
+
+/* ---------- MODAL ---------- */
+.modal-bg{display:none; position:fixed; inset:0; background:rgba(17,16,16,0.85); z-index:200; align-items:center; justify-content:center}
+.modal-bg.on{display:flex}
+.modal{background:var(--k); border:1px solid var(--line); padding:32px; width:440px; max-width:92vw; max-height:86vh; overflow-y:auto}
+.modal h2{font-size:24px; margin-bottom:20px}
+.field{margin-bottom:14px}
+.field label{display:block; margin-bottom:6px}
+.field-row{display:flex; gap:12px}
+.field-row > *{flex:1}
+.modal-actions{display:flex; justify-content:flex-end; gap:10px; margin-top:22px}
+
+.empty{color:var(--g); font-size:13px; padding:30px 0; text-align:center; font-family:'DM Mono',monospace; text-transform:uppercase; letter-spacing:0.08em}
+.toast{
+  position:fixed; bottom:24px; right:24px; background:var(--w); color:var(--k); padding:12px 20px;
+  font-family:'DM Mono',monospace; font-size:12px; text-transform:uppercase; letter-spacing:0.08em;
+  opacity:0; transform:translateY(10px); transition:all .2s; z-index:300;
+}
+.toast.on{opacity:1; transform:translateY(0)}
+
+@media(max-width:820px){
+  body{flex-direction:column}
+  .sidebar{width:100%; height:auto; position:relative; flex-direction:row; align-items:center; padding:16px 20px}
+  .brand{margin-bottom:0}
+  nav{flex-direction:row; overflow-x:auto}
+  .sidebar-foot{display:none}
+  main{padding:24px 20px}
+  .timer-display{font-size:56px}
+  .entry, .task-row{grid-template-columns:1fr; gap:4px}
+  .picker-row{flex-direction:column}
+}
+</style>
+</head>
+<body>
+
+<aside class="sidebar">
+  <div class="brand">
+    <div class="vk">Viconik</div>
+    <div class="sub">Horas</div>
+  </div>
+  <nav>
+    <button class="nav-btn on" data-view="cronometro">Cronómetro</button>
+    <button class="nav-btn" data-view="proyectos">Proyectos</button>
+    <button class="nav-btn" data-view="semana">Semana</button>
+    <button class="nav-btn" data-view="informes">Informes</button>
+  </nav>
+  <div class="sidebar-foot">
+    <div class="tagline">Donde todos pueden opinar, alguien tiene que poder demostrar</div>
+  </div>
+</aside>
+
+<main>
+
+  <!-- ===================== CRONÓMETRO ===================== -->
+  <section class="view on" id="view-cronometro">
+    <div class="view-head">
+      <h1>Cronómetro</h1>
+      <button class="btn" id="btn-manual">+ Entrada manual</button>
+    </div>
+
+    <div class="timer-card" id="timer-card">
+      <div class="timer-active-label" id="timer-idle-label">
+        <span class="label">Sin cronómetro activo</span>
+      </div>
+      <div class="timer-display mono" id="timer-display" style="display:none">00:00:00</div>
+      <div id="timer-info" style="display:none; text-align:center">
+        <div class="timer-task" id="timer-task-name"></div>
+        <div class="timer-project" id="timer-project-name"></div>
+      </div>
+      <div class="timer-warning" id="timer-warning" style="display:none"></div>
+
+      <div class="picker-row" id="picker-row">
+        <select id="sel-proyecto"><option value="">Selecciona proyecto…</option></select>
+        <select id="sel-tarea" disabled><option value="">Selecciona tarea…</option></select>
+      </div>
+      <div class="timer-controls">
+        <button class="btn primary" id="btn-start">Iniciar</button>
+        <button class="btn danger" id="btn-stop" style="display:none">Parar</button>
+      </div>
+    </div>
+
+    <h3 style="font-size:16px; margin-bottom:10px; color:var(--g); font-family:'DM Mono',monospace; text-transform:uppercase; letter-spacing:0.08em; font-weight:400">Últimas entradas</h3>
+    <div class="entries" id="entries-list">
+      <div class="entry entry-head"><div>Tarea</div><div>Proyecto</div><div>Categoría</div><div style="text-align:right">Duración</div><div></div></div>
+    </div>
+  </section>
+
+  <!-- ===================== PROYECTOS ===================== -->
+  <section class="view" id="view-proyectos">
+    <div class="view-head">
+      <h1>Proyectos</h1>
+      <button class="btn primary" id="btn-new-proyecto">+ Nuevo proyecto</button>
+    </div>
+    <div class="proj-grid" id="proj-grid"></div>
+  </section>
+
+  <!-- ===================== SEMANA ===================== -->
+  <section class="view" id="view-semana">
+    <div class="view-head">
+      <h1>Semana</h1>
+    </div>
+    <div class="week-nav">
+      <button class="btn small" id="week-prev">← Anterior</button>
+      <span class="label" id="week-label">—</span>
+      <button class="btn small" id="week-next">Siguiente →</button>
+      <button class="btn small ghost" id="week-today">Hoy</button>
+    </div>
+    <div class="week-grid" id="week-grid"></div>
+  </section>
+
+  <!-- ===================== INFORMES ===================== -->
+  <section class="view" id="view-informes">
+    <div class="view-head">
+      <h1>Informes</h1>
+      <button class="btn" id="btn-export">Exportar CSV</button>
+    </div>
+
+    <div class="cards-row" id="informe-cards"></div>
+
+    <div class="chart-block">
+      <h3 style="font-size:16px; margin-bottom:14px; color:var(--g); font-family:'DM Mono',monospace; text-transform:uppercase; letter-spacing:0.08em; font-weight:400">Horas por categoría</h3>
+      <div id="chart-categorias"></div>
+    </div>
+
+    <div class="chart-block">
+      <h3 style="font-size:16px; margin-bottom:14px; color:var(--g); font-family:'DM Mono',monospace; text-transform:uppercase; letter-spacing:0.08em; font-weight:400">Rentabilidad por proyecto (€ / hora)</h3>
+      <table class="report" id="tabla-rentabilidad">
+        <thead><tr><th>Proyecto</th><th>Cliente</th><th>Horas</th><th>Ticket</th><th>€ / hora</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </section>
+
+</main>
+
+<!-- ===================== MODALES ===================== -->
+<div class="modal-bg" id="modal-manual">
+  <div class="modal">
+    <h2>Entrada manual</h2>
+    <div class="field">
+      <label class="label">Proyecto</label>
+      <select id="man-proyecto"></select>
+    </div>
+    <div class="field">
+      <label class="label">Tarea</label>
+      <select id="man-tarea"></select>
+    </div>
+    <div class="field-row">
+      <div class="field"><label class="label">Inicio</label><input type="datetime-local" id="man-inicio"></div>
+      <div class="field"><label class="label">Fin</label><input type="datetime-local" id="man-fin"></div>
+    </div>
+    <div class="field"><label class="label">Nota (opcional)</label><input type="text" id="man-nota"></div>
+    <div class="modal-actions">
+      <button class="btn ghost" data-close="modal-manual">Cancelar</button>
+      <button class="btn primary" id="man-guardar">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-bg" id="modal-proyecto">
+  <div class="modal">
+    <h2>Nuevo proyecto</h2>
+    <div class="field"><label class="label">Nombre</label><input type="text" id="np-nombre"></div>
+    <div class="field"><label class="label">Cliente</label><input type="text" id="np-cliente" placeholder="Nombre del cliente (se crea si no existe)"></div>
+    <div class="field-row">
+      <div class="field">
+        <label class="label">Tipo de servicio</label>
+        <select id="np-tipo">
+          <option value="diagnostico">Diagnóstico</option>
+          <option value="auditoria" selected>Auditoría</option>
+          <option value="seguimiento">Seguimiento</option>
+          <option value="curso">Curso</option>
+          <option value="otro">Otro</option>
+        </select>
+      </div>
+      <div class="field"><label class="label">Presupuesto (horas)</label><input type="number" id="np-horas" step="0.5"></div>
+    </div>
+    <div class="field-row">
+      <div class="field"><label class="label">Ticket (€)</label><input type="number" id="np-ticket" step="1"></div>
+      <div class="field"><label class="label">Fecha límite</label><input type="date" id="np-fecha-limite"></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn ghost" data-close="modal-proyecto">Cancelar</button>
+      <button class="btn primary" id="np-guardar">Crear</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const API = '/api';
+const CATEGORIAS = [
+  ['auditoria','Auditoría'], ['prospeccion','Prospección'],
+  ['produccion_contenido','Producción de contenido'], ['administracion','Administración'],
+  ['formacion','Formación / cursos'], ['otro','Otro']
+];
+
+let state = { proyectos: [], tareas: [], activo: null, timerInterval: null, weekOffset: 0 };
+
+function toast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('on');
+  setTimeout(()=>t.classList.remove('on'), 2200);
+}
+
+async function api(path, opts={}){
+  const res = await fetch(API + path, {
+    headers:{'Content-Type':'application/json'},
+    ...opts
+  });
+  if(!res.ok){ toast('Error: ' + res.status); throw new Error('API error ' + res.status); }
+  return res.json();
+}
+
+function fmtDur(segundos){
+  segundos = Math.max(0, Math.round(segundos||0));
+  const h = Math.floor(segundos/3600), m = Math.floor((segundos%3600)/60), s = segundos%60;
+  return [h,m,s].map(n=>String(n).padStart(2,'0')).join(':');
+}
+function fmtHoras(segundos){ return (segundos/3600).toFixed(1) + 'h'; }
+function catLabel(c){ const f = CATEGORIAS.find(x=>x[0]===c); return f?f[1]:c; }
+
+/* ---------------- NAV ---------------- */
+document.querySelectorAll('.nav-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('on'));
+    document.querySelectorAll('.view').forEach(v=>v.classList.remove('on'));
+    btn.classList.add('on');
+    document.getElementById('view-' + btn.dataset.view).classList.add('on');
+    if(btn.dataset.view === 'proyectos') cargarProyectos();
+    if(btn.dataset.view === 'informes') cargarInformes();
+    if(btn.dataset.view === 'semana') cargarSemana();
+  });
+});
+
+/* ---------------- CRONÓMETRO ---------------- */
+async function cargarProyectosSelect(select, incluirVacio){
+  const proyectos = await api('/proyectos');
+  state.proyectos = proyectos;
+  select.innerHTML = (incluirVacio ? '<option value="">Selecciona proyecto…</option>' : '') +
+    proyectos.filter(p=>p.estado!=='cerrado').map(p=>`<option value="${p.id}">${p.nombre}</option>`).join('');
+}
+
+async function cargarTareasSelect(select, proyectoId){
+  if(!proyectoId){ select.innerHTML = '<option value="">Selecciona tarea…</option>'; select.disabled = true; return; }
+  const tareas = await api('/tareas?proyecto_id=' + proyectoId);
+  select.disabled = false;
+  select.innerHTML = '<option value="">Selecciona tarea…</option>' +
+    tareas.map(t=>`<option value="${t.id}">${t.nombre}</option>`).join('');
+}
+
+document.getElementById('sel-proyecto').addEventListener('change', e=>{
+  cargarTareasSelect(document.getElementById('sel-tarea'), e.target.value);
+});
+
+document.getElementById('btn-start').addEventListener('click', async ()=>{
+  const tareaId = document.getElementById('sel-tarea').value;
+  if(!tareaId){ toast('Elige una tarea primero'); return; }
+  const entrada = await api('/tiempo', { method:'POST', body: JSON.stringify({ tarea_id: tareaId }) });
+  state.activo = entrada;
+  refrescarTimerUI();
+  cargarEntradas();
+});
+
+document.getElementById('btn-stop').addEventListener('click', async ()=>{
+  if(!state.activo) return;
+  await api('/tiempo?id=' + state.activo.id, { method:'PATCH', body: JSON.stringify({ accion:'parar' }) });
+  state.activo = null;
+  refrescarTimerUI();
+  cargarEntradas();
+  cargarProyectosSelect(document.getElementById('sel-proyecto'), true);
+});
+
+function refrescarTimerUI(){
+  clearInterval(state.timerInterval);
+  const card = document.getElementById('timer-card');
+  const idleLabel = document.getElementById('timer-idle-label');
+  const display = document.getElementById('timer-display');
+  const info = document.getElementById('timer-info');
+  const picker = document.getElementById('picker-row');
+  const btnStart = document.getElementById('btn-start');
+  const btnStop = document.getElementById('btn-stop');
+  const warning = document.getElementById('timer-warning');
+
+  if(state.activo){
+    card.classList.add('running');
+    idleLabel.innerHTML = '<span class="rec-dot"></span><span class="label" style="color:var(--accent)">En marcha</span>';
+    display.style.display = 'block';
+    info.style.display = 'block';
+    document.getElementById('timer-task-name').textContent = state.activo.tarea_nombre;
+    document.getElementById('timer-project-name').textContent = state.activo.proyecto_nombre;
+    picker.style.display = 'none';
+    btnStart.style.display = 'none';
+    btnStop.style.display = 'inline-block';
+
+    const inicio = new Date(state.activo.inicio);
+    const tick = ()=>{
+      const seg = (Date.now() - inicio) / 1000;
+      display.textContent = fmtDur(seg);
+      if(seg > 3*3600){
+        warning.style.display = 'block';
+        warning.textContent = 'Llevas más de 3 horas — ¿sigues en esta tarea?';
+      } else { warning.style.display = 'none'; }
+    };
+    tick();
+    state.timerInterval = setInterval(tick, 1000);
+  } else {
+    card.classList.remove('running');
+    idleLabel.innerHTML = '<span class="label">Sin cronómetro activo</span>';
+    display.style.display = 'none';
+    info.style.display = 'none';
+    warning.style.display = 'none';
+    picker.style.display = 'flex';
+    btnStart.style.display = 'inline-block';
+    btnStop.style.display = 'none';
+  }
+}
+
+async function cargarEntradas(){
+  const entradas = await api('/tiempo');
+  const list = document.getElementById('entries-list');
+  list.innerHTML = '<div class="entry entry-head"><div>Tarea</div><div>Proyecto</div><div>Categoría</div><div style="text-align:right">Duración</div><div></div></div>';
+  entradas.filter(e=>e.duracion_segundos!==null).slice(0,25).forEach(e=>{
+    const row = document.createElement('div');
+    row.className = 'entry';
+    row.innerHTML = `
+      <div>${e.tarea_nombre}</div>
+      <div class="cat">${e.proyecto_nombre}</div>
+      <div class="cat">${catLabel(e.categoria)}</div>
+      <div class="dur">${fmtDur(e.duracion_segundos)}</div>
+      <div class="del" data-id="${e.id}">✕</div>`;
+    list.appendChild(row);
+  });
+  list.querySelectorAll('.del').forEach(el=>{
+    el.addEventListener('click', async ()=>{
+      await api('/tiempo?id=' + el.dataset.id, { method:'DELETE' });
+      cargarEntradas();
+    });
+  });
+}
+
+async function initCronometro(){
+  await cargarProyectosSelect(document.getElementById('sel-proyecto'), true);
+  const activo = await api('/tiempo?activo=1');
+  state.activo = activo;
+  refrescarTimerUI();
+  cargarEntradas();
+}
+
+/* ---------------- MODAL: ENTRADA MANUAL ---------------- */
+function openModal(id){ document.getElementById(id).classList.add('on'); }
+function closeModal(id){ document.getElementById(id).classList.remove('on'); }
+document.querySelectorAll('[data-close]').forEach(b=>b.addEventListener('click', ()=>closeModal(b.dataset.close)));
+
+document.getElementById('btn-manual').addEventListener('click', async ()=>{
+  await cargarProyectosSelect(document.getElementById('man-proyecto'), false);
+  await cargarTareasSelect(document.getElementById('man-tarea'), document.getElementById('man-proyecto').value);
+  openModal('modal-manual');
+});
+document.getElementById('man-proyecto').addEventListener('change', e=>{
+  cargarTareasSelect(document.getElementById('man-tarea'), e.target.value);
+});
+document.getElementById('man-guardar').addEventListener('click', async ()=>{
+  const tareaId = document.getElementById('man-tarea').value;
+  const inicio = document.getElementById('man-inicio').value;
+  const fin = document.getElementById('man-fin').value;
+  const nota = document.getElementById('man-nota').value;
+  if(!tareaId || !inicio || !fin){ toast('Completa proyecto, tarea, inicio y fin'); return; }
+  await api('/tiempo', { method:'POST', body: JSON.stringify({ tarea_id: tareaId, manual:true, inicio, fin, nota }) });
+  closeModal('modal-manual');
+  cargarEntradas();
+  toast('Entrada guardada');
+});
+
+/* ---------------- PROYECTOS ---------------- */
+document.getElementById('btn-new-proyecto').addEventListener('click', ()=>openModal('modal-proyecto'));
+document.getElementById('np-guardar').addEventListener('click', async ()=>{
+  const nombre = document.getElementById('np-nombre').value;
+  if(!nombre){ toast('Falta el nombre'); return; }
+  let clienteId = null;
+  const clienteNombre = document.getElementById('np-cliente').value.trim();
+  if(clienteNombre){
+    const clientes = await api('/clientes');
+    const existente = clientes.find(c=>c.nombre.toLowerCase() === clienteNombre.toLowerCase());
+    clienteId = existente ? existente.id : (await api('/clientes', { method:'POST', body: JSON.stringify({ nombre: clienteNombre }) })).id;
+  }
+  await api('/proyectos', { method:'POST', body: JSON.stringify({
+    nombre, cliente_id: clienteId,
+    tipo_servicio: document.getElementById('np-tipo').value,
+    presupuesto_horas: document.getElementById('np-horas').value || null,
+    ticket_eur: document.getElementById('np-ticket').value || null,
+    fecha_limite: document.getElementById('np-fecha-limite').value || null
+  })});
+  closeModal('modal-proyecto');
+  document.getElementById('np-nombre').value = '';
+  document.getElementById('np-cliente').value = '';
+  cargarProyectos();
+  toast('Proyecto creado');
+});
+
+async function cargarProyectos(){
+  const proyectos = await api('/proyectos');
+  const grid = document.getElementById('proj-grid');
+  if(proyectos.length === 0){ grid.innerHTML = '<div class="empty">Todavía no hay proyectos</div>'; return; }
+  grid.innerHTML = '';
+  proyectos.forEach(p=>{
+    const horasReales = p.segundos_totales / 3600;
+    const pres = parseFloat(p.presupuesto_horas) || 0;
+    const pct = pres > 0 ? Math.min(100, (horasReales/pres)*100) : 0;
+    const barClass = pres > 0 ? (horasReales > pres ? 'over' : (pct > 80 ? 'warn' : '')) : '';
+    const card = document.createElement('div');
+    card.className = 'proj-card';
+    card.innerHTML = `
+      <div class="proj-top" data-toggle="${p.id}">
+        <div>
+          <div class="proj-name">${p.nombre}</div>
+          <div class="proj-client">${p.cliente_nombre || 'Sin cliente'} · ${p.tipo_servicio}</div>
+        </div>
+        <div class="proj-meta">
+          ${fmtHoras(p.segundos_totales)} ${pres ? ' / ' + pres + 'h' : ''}<br>
+          ${p.estado}
+        </div>
+      </div>
+      ${pres ? `<div class="bar-track"><div class="bar-fill ${barClass}" style="width:${pct}%"></div></div>` : ''}
+      <div class="proj-tasks" id="tasks-${p.id}">
+        <div class="task-list" id="task-list-${p.id}"></div>
+        <div class="new-task-row">
+          <input type="text" placeholder="Nueva tarea…" id="new-task-name-${p.id}">
+          <select id="new-task-cat-${p.id}">${CATEGORIAS.map(c=>`<option value="${c[0]}">${c[1]}</option>`).join('')}</select>
+          <button class="btn small" data-add-task="${p.id}">Añadir</button>
+        </div>
+      </div>`;
+    grid.appendChild(card);
+  });
+
+  grid.querySelectorAll('[data-toggle]').forEach(el=>{
+    el.addEventListener('click', async ()=>{
+      const id = el.dataset.toggle;
+      const panel = document.getElementById('tasks-' + id);
+      panel.classList.toggle('on');
+      if(panel.classList.contains('on')) cargarTareasProyecto(id);
+    });
+  });
+  grid.querySelectorAll('[data-add-task]').forEach(el=>{
+    el.addEventListener('click', async ()=>{
+      const id = el.dataset.addTask;
+      const nombre = document.getElementById('new-task-name-'+id).value;
+      const categoria = document.getElementById('new-task-cat-'+id).value;
+      if(!nombre) return;
+      await api('/tareas', { method:'POST', body: JSON.stringify({ proyecto_id:id, nombre, categoria }) });
+      document.getElementById('new-task-name-'+id).value = '';
+      cargarTareasProyecto(id);
+    });
+  });
+}
+
+async function cargarTareasProyecto(proyectoId){
+  const tareas = await api('/tareas?proyecto_id=' + proyectoId);
+  const list = document.getElementById('task-list-' + proyectoId);
+  if(tareas.length === 0){ list.innerHTML = '<div class="empty">Sin tareas todavía</div>'; return; }
+  list.innerHTML = tareas.map(t => `
+    <div class="task-row">
+      <div>${t.nombre}</div>
+      <div class="cat">${catLabel(t.categoria)}</div>
+      <div class="mono" style="font-size:12px">${fmtHoras(t.segundos_totales)}</div>
+      <div><span class="pill ${t.estado==='completada'?'on-track':''}">${t.estado.replace('_',' ')}</span></div>
+      <div class="del" data-del-task="${t.id}" style="cursor:pointer;color:var(--g)">✕</div>
+    </div>`).join('');
+  list.querySelectorAll('[data-del-task]').forEach(el=>{
+    el.addEventListener('click', async ()=>{
+      await api('/tareas?id=' + el.dataset.delTask, { method:'DELETE' });
+      cargarTareasProyecto(proyectoId);
+    });
+  });
+}
+
+/* ---------------- SEMANA ---------------- */
+function inicioSemana(offset){
+  const d = new Date();
+  d.setDate(d.getDate() + offset*7);
+  const day = (d.getDay() + 6) % 7; // lunes = 0
+  d.setDate(d.getDate() - day);
+  d.setHours(0,0,0,0);
+  return d;
+}
+document.getElementById('week-prev').addEventListener('click', ()=>{ state.weekOffset--; cargarSemana(); });
+document.getElementById('week-next').addEventListener('click', ()=>{ state.weekOffset++; cargarSemana(); });
+document.getElementById('week-today').addEventListener('click', ()=>{ state.weekOffset = 0; cargarSemana(); });
+
+async function cargarSemana(){
+  const inicio = inicioSemana(state.weekOffset);
+  const fechaStr = inicio.toISOString().slice(0,10);
+  document.getElementById('week-label').textContent = inicio.toLocaleDateString('es-ES', {day:'numeric', month:'long', year:'numeric'});
+  const entradas = await api('/resumen?tipo=semana&fecha=' + fechaStr);
+
+  const dias = ['Lunes','Martes','Miércoles','Jueves','Viernes','Sábado','Domingo'];
+  const grid = document.getElementById('week-grid');
+  grid.innerHTML = '';
+  for(let i=0;i<7;i++){
+    const d = new Date(inicio); d.setDate(d.getDate()+i);
+    const dStr = d.toISOString().slice(0,10);
+    const delDia = entradas.filter(e=>e.inicio.slice(0,10) === dStr && e.duracion_segundos!==null);
+    const total = delDia.reduce((s,e)=>s+e.duracion_segundos,0);
+    const col = document.createElement('div');
+    col.className = 'day-col';
+    col.innerHTML = `<div class="day-head">${dias[i]} ${d.getDate()}</div>` +
+      (delDia.length ? delDia.map(e=>`<div class="day-entry">${e.tarea_nombre}<div class="t">${e.proyecto_nombre} · ${fmtDur(e.duracion_segundos)}</div></div>`).join('') : '<div class="empty" style="padding:10px 0">—</div>') +
+      (total ? `<div class="day-total">${fmtHoras(total)}</div>` : '');
+    grid.appendChild(col);
+  }
+}
+
+/* ---------------- INFORMES ---------------- */
+async function cargarInformes(){
+  const proyectos = await api('/resumen?tipo=proyectos');
+  const categorias = await api('/resumen?tipo=categorias');
+  const rentabilidad = await api('/resumen?tipo=rentabilidad');
+
+  const totalHoras = proyectos.reduce((s,p)=>s+parseFloat(p.horas_reales||0),0);
+  const activos = state.proyectos.filter(p=>p.estado==='activo').length;
+  const sobrepresupuesto = proyectos.filter(p=>p.presupuesto_horas && parseFloat(p.horas_reales) > parseFloat(p.presupuesto_horas)).length;
+
+  document.getElementById('informe-cards').innerHTML = `
+    <div class="stat-card"><div class="label">Horas totales registradas</div><div class="stat-num">${totalHoras.toFixed(1)}</div></div>
+    <div class="stat-card"><div class="label">Proyectos con seguimiento</div><div class="stat-num">${proyectos.length}</div></div>
+    <div class="stat-card"><div class="label">Proyectos sobre presupuesto</div><div class="stat-num" style="color:${sobrepresupuesto?'var(--accent)':'var(--w)'}">${sobrepresupuesto}</div></div>
+  `;
+
+  const maxCat = Math.max(1, ...categorias.map(c=>parseFloat(c.horas)));
+  document.getElementById('chart-categorias').innerHTML = categorias.map(c=>`
+    <div class="chart-row">
+      <div class="cat">${catLabel(c.categoria)}</div>
+      <div class="chart-bar-track"><div class="chart-bar-fill" style="width:${(parseFloat(c.horas)/maxCat)*100}%"></div></div>
+      <div class="mono" style="text-align:right">${parseFloat(c.horas).toFixed(1)}h</div>
+    </div>`).join('') || '<div class="empty">Sin datos todavía</div>';
+
+  const tbody = document.querySelector('#tabla-rentabilidad tbody');
+  tbody.innerHTML = rentabilidad.map(r=>`
+    <tr>
+      <td>${r.nombre}</td>
+      <td>${r.cliente_nombre||'—'}</td>
+      <td>${parseFloat(r.horas_reales).toFixed(1)}h</td>
+      <td>${r.ticket_eur ? r.ticket_eur+'€' : '—'}</td>
+      <td>${r.eur_por_hora ? parseFloat(r.eur_por_hora).toFixed(0)+'€/h' : '—'}</td>
+    </tr>`).join('') || '<tr><td colspan="5" class="empty">Sin datos todavía</td></tr>';
+}
+
+/* ---------------- EXPORT CSV ---------------- */
+document.getElementById('btn-export').addEventListener('click', async ()=>{
+  const entradas = await api('/tiempo');
+  const filas = entradas.filter(e=>e.duracion_segundos!==null).map(e =>
+    [e.proyecto_nombre, e.tarea_nombre, catLabel(e.categoria), e.inicio, e.fin, (e.duracion_segundos/3600).toFixed(2)].join(';')
+  );
+  const csv = 'Proyecto;Tarea;Categoría;Inicio;Fin;Horas\n' + filas.join('\n');
+  const blob = new Blob([csv], { type:'text/csv' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'horas_viconik_' + new Date().toISOString().slice(0,10) + '.csv';
+  a.click();
+});
+
+initCronometro();
+</script>
+</body>
+</html>

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>HORAS · Viconik</title>
+<title>Horas — Gestor de tiempo</title>
 <meta name="robots" content="noindex, nofollow">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;700&family=Playfair+Display:ital@0;1&display=swap" rel="stylesheet">
@@ -270,8 +270,8 @@ table.report tr:hover td{background:var(--line-soft)}
 
 <aside class="sidebar">
   <div class="brand">
-    <div class="vk">Viconik</div>
-    <div class="sub">Horas</div>
+    <div class="vk">Horas</div>
+    <div class="sub">Gestor de tiempo</div>
   </div>
   <nav>
     <button class="nav-btn on" data-view="cronometro">Cronómetro</button>
@@ -280,7 +280,7 @@ table.report tr:hover td{background:var(--line-soft)}
     <button class="nav-btn" data-view="informes">Informes</button>
   </nav>
   <div class="sidebar-foot">
-    <div class="tagline">Donde todos pueden opinar, alguien tiene que poder demostrar</div>
+    <div class="tagline">Cada hora, contabilizada.</div>
   </div>
 </aside>
 
@@ -401,12 +401,11 @@ table.report tr:hover td{background:var(--line-soft)}
     <div class="field"><label class="label">Cliente</label><input type="text" id="np-cliente" placeholder="Nombre del cliente (se crea si no existe)"></div>
     <div class="field-row">
       <div class="field">
-        <label class="label">Tipo de servicio</label>
+        <label class="label">Tipo de proyecto</label>
         <select id="np-tipo">
-          <option value="diagnostico">Diagnóstico</option>
-          <option value="auditoria" selected>Auditoría</option>
-          <option value="seguimiento">Seguimiento</option>
-          <option value="curso">Curso</option>
+          <option value="cliente" selected>Cliente</option>
+          <option value="interno">Interno</option>
+          <option value="personal">Personal</option>
           <option value="otro">Otro</option>
         </select>
       </div>
@@ -428,9 +427,9 @@ table.report tr:hover td{background:var(--line-soft)}
 <script>
 const API = '/api';
 const CATEGORIAS = [
-  ['auditoria','Auditoría'], ['prospeccion','Prospección'],
-  ['produccion_contenido','Producción de contenido'], ['administracion','Administración'],
-  ['formacion','Formación / cursos'], ['otro','Otro']
+  ['trabajo_profundo','Trabajo profundo'], ['reuniones','Reuniones'],
+  ['administracion','Administración'], ['comunicacion','Comunicación'],
+  ['formacion','Formación'], ['otro','Otro']
 ];
 
 let state = { proyectos: [], tareas: [], activo: null, timerInterval: null, weekOffset: 0 };
@@ -760,7 +759,7 @@ async function cargarInformes(){
 
   document.getElementById('informe-cards').innerHTML = `
     <div class="stat-card"><div class="label">Horas totales registradas</div><div class="stat-num">${totalHoras.toFixed(1)}</div></div>
-    <div class="stat-card"><div class="label">Proyectos con seguimiento</div><div class="stat-num">${proyectos.length}</div></div>
+    <div class="stat-card"><div class="label">Proyectos registrados</div><div class="stat-num">${proyectos.length}</div></div>
     <div class="stat-card"><div class="label">Proyectos sobre presupuesto</div><div class="stat-num" style="color:${sobrepresupuesto?'var(--accent)':'var(--w)'}">${sobrepresupuesto}</div></div>
   `;
 
@@ -793,7 +792,7 @@ document.getElementById('btn-export').addEventListener('click', async ()=>{
   const blob = new Blob([csv], { type:'text/csv' });
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
-  a.download = 'horas_viconik_' + new Date().toISOString().slice(0,10) + '.csv';
+  a.download = 'horas_' + new Date().toISOString().slice(0,10) + '.csv';
   a.click();
 });
 

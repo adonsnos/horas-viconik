@@ -12,55 +12,40 @@
   --k:#111010; --w:#EDEBE7; --g:#8a8780;
   --line: rgba(237,235,231,0.14);
   --line-soft: rgba(237,235,231,0.08);
-  --accent:#c44a3a;      /* cronómetro activo / alerta */
-  --accent-ok:#6c9e7a;   /* dentro de presupuesto */
-  --accent-warn:#d4a13a; /* cerca del límite */
+  --accent:#c44a3a;
+  --accent-ok:#6c9e7a;
+  --accent-warn:#d4a13a;
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%}
-body{
-  background:var(--k); color:var(--w);
-  font-family:'DM Sans',sans-serif; font-weight:300;
-  display:flex; min-height:100vh;
-}
+body{background:var(--k); color:var(--w); font-family:'DM Sans',sans-serif; font-weight:300; display:flex; min-height:100vh}
 ::selection{background:var(--w);color:var(--k)}
 h1,h2,h3{font-family:'Bebas Neue',sans-serif; letter-spacing:0.02em; font-weight:400}
 .mono{font-family:'DM Mono',monospace}
-.label{
-  font-family:'DM Mono',monospace; font-size:11px; text-transform:uppercase;
-  letter-spacing:0.12em; color:var(--g);
-}
+.label{font-family:'DM Mono',monospace; font-size:11px; text-transform:uppercase; letter-spacing:0.12em; color:var(--g)}
 
 /* ---------- SIDEBAR ---------- */
-.sidebar{
-  width:220px; flex-shrink:0; height:100vh; position:sticky; top:0;
-  border-right:1px solid var(--line); padding:28px 22px; display:flex; flex-direction:column;
-}
+.sidebar{width:220px; flex-shrink:0; height:100vh; position:sticky; top:0; border-right:1px solid var(--line); padding:28px 22px; display:flex; flex-direction:column}
 .brand{margin-bottom:44px}
 .brand .vk{font-family:'Playfair Display',serif; font-style:italic; font-size:22px; letter-spacing:0.02em}
 .brand .sub{font-family:'DM Mono',monospace; font-size:10px; color:var(--g); text-transform:uppercase; letter-spacing:0.15em; margin-top:4px}
 nav{display:flex; flex-direction:column; gap:2px}
-nav button{
-  all:unset; cursor:pointer; padding:11px 10px; font-family:'DM Mono',monospace; font-size:12px;
-  text-transform:uppercase; letter-spacing:0.1em; color:var(--g); border-left:2px solid transparent;
-  transition:all .15s;
-}
+nav button{all:unset; cursor:pointer; padding:11px 10px; font-family:'DM Mono',monospace; font-size:12px; text-transform:uppercase; letter-spacing:0.1em; color:var(--g); border-left:2px solid transparent; transition:all .15s}
 nav button:hover{color:var(--w)}
 nav button.on{color:var(--w); border-left-color:var(--w); background:var(--line-soft)}
 .sidebar-foot{margin-top:auto; padding-top:20px; border-top:1px solid var(--line)}
 .tagline{font-family:'Playfair Display',serif; font-style:italic; font-size:11px; color:var(--g); line-height:1.5}
 
 /* ---------- MAIN ---------- */
-main{flex:1; padding:36px 44px; max-width:1180px}
+main{flex:1; padding:36px 44px; max-width:1080px}
 .view{display:none}
 .view.on{display:block}
 .view-head{display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:28px; gap:20px; flex-wrap:wrap}
 .view-head h1{font-size:36px}
+.back-link{all:unset; cursor:pointer; color:var(--g); font-family:'DM Mono',monospace; font-size:11px; text-transform:uppercase; letter-spacing:0.08em; margin-bottom:18px; display:inline-block}
+.back-link:hover{color:var(--w)}
 
-.btn{
-  all:unset; cursor:pointer; font-family:'DM Mono',monospace; font-size:11px; text-transform:uppercase;
-  letter-spacing:0.1em; padding:10px 18px; border:1px solid var(--w); color:var(--w); transition:all .15s;
-}
+.btn{all:unset; cursor:pointer; font-family:'DM Mono',monospace; font-size:11px; text-transform:uppercase; letter-spacing:0.1em; padding:10px 18px; border:1px solid var(--w); color:var(--w); transition:all .15s}
 .btn:hover{background:var(--w); color:var(--k)}
 .btn.primary{background:var(--w); color:var(--k)}
 .btn.primary:hover{background:transparent; color:var(--w)}
@@ -70,84 +55,65 @@ main{flex:1; padding:36px 44px; max-width:1180px}
 .btn.ghost{border-color:transparent; color:var(--g)}
 .btn.ghost:hover{color:var(--w); background:transparent}
 
-/* ---------- CRONÓMETRO ---------- */
-.timer-card{
-  border:1px solid var(--line); padding:40px; display:flex; flex-direction:column; align-items:center;
-  gap:18px; margin-bottom:36px; position:relative;
-}
-.timer-card.running{border-color:var(--accent)}
-.rec-dot{width:8px;height:8px;border-radius:50%;background:var(--accent); display:inline-block; animation:pulse 1.4s infinite}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}
-.timer-active-label{display:flex; align-items:center; gap:8px}
-.timer-display{font-family:'Bebas Neue',sans-serif; font-size:88px; line-height:1; letter-spacing:0.02em}
-.timer-task{font-size:15px; color:var(--w)}
-.timer-project{font-family:'DM Mono',monospace; font-size:11px; color:var(--g); text-transform:uppercase; letter-spacing:0.1em}
-.timer-controls{display:flex; gap:14px; align-items:center; margin-top:6px}
-.timer-warning{
-  font-family:'DM Mono',monospace; font-size:11px; color:var(--accent-warn); text-transform:uppercase;
-  letter-spacing:0.08em; margin-top:4px;
-}
-select, input, textarea{
-  background:transparent; border:1px solid var(--line); color:var(--w); font-family:'DM Sans',sans-serif;
-  font-size:14px; padding:10px 12px; width:100%;
-}
+select, input, textarea{background:transparent; border:1px solid var(--line); color:var(--w); font-family:'DM Sans',sans-serif; font-size:14px; padding:10px 12px; width:100%}
 select:focus, input:focus, textarea:focus{outline:none; border-color:var(--w)}
-.picker-row{display:flex; gap:12px; width:100%; max-width:640px}
-.picker-row > *{flex:1}
-
-.entries{margin-top:8px}
-.entry{
-  display:grid; grid-template-columns:1fr 1fr 110px 90px 40px; gap:14px; align-items:center;
-  padding:14px 0; border-bottom:1px solid var(--line-soft); font-size:13px;
-}
-.entry-head{color:var(--g); font-family:'DM Mono',monospace; font-size:10px; text-transform:uppercase; letter-spacing:0.1em}
-.entry .cat{
-  font-family:'DM Mono',monospace; font-size:10px; text-transform:uppercase; letter-spacing:0.08em; color:var(--g);
-}
-.entry .dur{font-family:'DM Mono',monospace; text-align:right}
-.entry .del{color:var(--g); cursor:pointer; text-align:right}
-.entry .del:hover{color:var(--accent)}
 
 /* ---------- PROYECTOS ---------- */
-.proj-grid{display:grid; gap:14px}
-.proj-card{border:1px solid var(--line); padding:22px}
-.proj-top{display:flex; justify-content:space-between; align-items:flex-start; gap:16px; cursor:pointer}
-.proj-name{font-size:19px}
+.proj-grid{display:grid; gap:12px}
+.proj-card{border:1px solid var(--line); padding:20px 22px; cursor:pointer; transition:border-color .15s; display:flex; justify-content:space-between; align-items:center; gap:16px}
+.proj-card:hover{border-color:var(--w)}
+.proj-name{font-size:18px}
 .proj-client{font-family:'DM Mono',monospace; font-size:11px; color:var(--g); text-transform:uppercase; letter-spacing:0.08em; margin-top:2px}
-.proj-meta{text-align:right; font-family:'DM Mono',monospace; font-size:12px; color:var(--g)}
-.bar-track{height:4px; background:var(--line-soft); margin-top:14px; position:relative}
-.bar-fill{height:100%; background:var(--w)}
-.bar-fill.warn{background:var(--accent-warn)}
-.bar-fill.over{background:var(--accent)}
-.proj-tasks{margin-top:18px; padding-top:18px; border-top:1px solid var(--line-soft); display:none}
-.proj-tasks.on{display:block}
-.task-row{display:grid; grid-template-columns:1fr 130px 90px 80px 30px; gap:10px; align-items:center; padding:9px 0; font-size:13px; border-bottom:1px solid var(--line-soft)}
-.task-row .cat{font-family:'DM Mono',monospace; font-size:10px; color:var(--g); text-transform:uppercase}
+.proj-meta{text-align:right; font-family:'DM Mono',monospace; font-size:12px; color:var(--g); white-space:nowrap}
 .pill{font-family:'DM Mono',monospace; font-size:10px; text-transform:uppercase; letter-spacing:0.06em; padding:3px 8px; border:1px solid var(--line); color:var(--g); display:inline-block}
 .pill.on-track{color:var(--accent-ok); border-color:var(--accent-ok)}
-.new-task-row{display:flex; gap:8px; margin-top:12px}
+.pill.high{color:var(--accent); border-color:var(--accent)}
+
+/* ---------- DETALLE DE PROYECTO ---------- */
+.proj-detail-head{display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:8px; flex-wrap:wrap; gap:14px}
+.proj-detail-head .proj-client{margin-top:6px}
+.section-title{font-size:15px; margin:32px 0 14px; color:var(--g); font-family:'DM Mono',monospace; text-transform:uppercase; letter-spacing:0.08em; font-weight:400; display:flex; justify-content:space-between; align-items:center}
+
+.task-row{display:grid; grid-template-columns:1fr 90px 90px 90px auto; gap:12px; align-items:center; padding:13px 0; border-bottom:1px solid var(--line-soft); font-size:13px}
+.task-row .title{font-size:14px}
+.task-row .desc{color:var(--g); font-size:12px; margin-top:2px}
+.task-row .deadline{font-family:'DM Mono',monospace; font-size:11px; color:var(--g)}
+.task-actions{display:flex; gap:6px}
+.task-actions .icon-btn{all:unset; cursor:pointer; color:var(--g); font-size:13px; padding:4px 6px}
+.task-actions .icon-btn:hover{color:var(--w)}
+
+.entry-row{display:grid; grid-template-columns:100px 1fr 70px 30px; gap:12px; align-items:start; padding:12px 0; border-bottom:1px solid var(--line-soft); font-size:13px}
+.entry-row .fecha{font-family:'DM Mono',monospace; color:var(--g); font-size:11px}
+.entry-row .desc{color:var(--w)}
+.entry-row .tarea-ref{color:var(--g); font-size:11px; font-family:'DM Mono',monospace; text-transform:uppercase; letter-spacing:0.06em; margin-top:2px}
+.entry-row .horas{font-family:'DM Mono',monospace; text-align:right}
+.entry-row .del{color:var(--g); cursor:pointer; text-align:right}
+.entry-row .del:hover{color:var(--accent)}
+
+/* ---------- PLAZOS ---------- */
+.deadline-item{display:flex; justify-content:space-between; align-items:center; padding:14px 16px; border:1px solid var(--line); margin-bottom:8px; cursor:pointer}
+.deadline-item:hover{border-color:var(--w)}
+.deadline-item.overdue{border-color:var(--accent)}
+.deadline-item.soon{border-color:var(--accent-warn)}
+.deadline-info .t{font-size:14px}
+.deadline-info .p{font-family:'DM Mono',monospace; font-size:11px; color:var(--g); text-transform:uppercase; letter-spacing:0.06em; margin-top:3px}
+.deadline-date{font-family:'DM Mono',monospace; font-size:12px; white-space:nowrap}
+.deadline-date.overdue{color:var(--accent)}
+.deadline-date.soon{color:var(--accent-warn)}
 
 /* ---------- INFORMES ---------- */
-.cards-row{display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:16px; margin-bottom:36px}
+.cards-row{display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:16px; margin-bottom:36px}
 .stat-card{border:1px solid var(--line); padding:20px}
-.stat-num{font-family:'Bebas Neue',sans-serif; font-size:42px}
+.stat-num{font-family:'Bebas Neue',sans-serif; font-size:38px}
 .chart-block{margin-bottom:40px}
-.chart-row{display:grid; grid-template-columns:150px 1fr 70px; gap:14px; align-items:center; padding:9px 0}
+.chart-row{display:grid; grid-template-columns:150px 1fr 60px; gap:14px; align-items:center; padding:9px 0}
 .chart-bar-track{height:14px; background:var(--line-soft)}
 .chart-bar-fill{height:100%; background:var(--w)}
 table.report{width:100%; border-collapse:collapse; font-size:13px}
 table.report th{text-align:left; font-family:'DM Mono',monospace; font-size:10px; text-transform:uppercase; letter-spacing:0.08em; color:var(--g); padding:10px 8px; border-bottom:1px solid var(--line)}
 table.report td{padding:12px 8px; border-bottom:1px solid var(--line-soft)}
 table.report tr:hover td{background:var(--line-soft)}
-
-/* ---------- SEMANA ---------- */
-.week-nav{display:flex; align-items:center; gap:16px; margin-bottom:24px}
-.week-grid{display:grid; grid-template-columns:repeat(7,1fr); gap:10px}
-.day-col{border:1px solid var(--line); min-height:120px; padding:12px}
-.day-head{font-family:'DM Mono',monospace; font-size:10px; text-transform:uppercase; color:var(--g); letter-spacing:0.08em; margin-bottom:10px}
-.day-entry{font-size:11px; padding:6px 0; border-bottom:1px solid var(--line-soft)}
-.day-entry .t{color:var(--g); font-family:'DM Mono',monospace; font-size:10px}
-.day-total{margin-top:8px; font-family:'DM Mono',monospace; font-size:11px; color:var(--w)}
+.table-scroll{overflow-x:auto; -webkit-overflow-scrolling:touch}
 
 /* ---------- MODAL ---------- */
 .modal-bg{display:none; position:fixed; inset:0; background:rgba(17,16,16,0.85); z-index:200; align-items:center; justify-content:center}
@@ -161,109 +127,53 @@ table.report tr:hover td{background:var(--line-soft)}
 .modal-actions{display:flex; justify-content:flex-end; gap:10px; margin-top:22px}
 
 .empty{color:var(--g); font-size:13px; padding:30px 0; text-align:center; font-family:'DM Mono',monospace; text-transform:uppercase; letter-spacing:0.08em}
-.toast{
-  position:fixed; bottom:24px; right:24px; background:var(--w); color:var(--k); padding:12px 20px;
-  font-family:'DM Mono',monospace; font-size:12px; text-transform:uppercase; letter-spacing:0.08em;
-  opacity:0; transform:translateY(10px); transition:all .2s; z-index:300;
-}
+.toast{position:fixed; bottom:24px; right:24px; background:var(--w); color:var(--k); padding:12px 20px; font-family:'DM Mono',monospace; font-size:12px; text-transform:uppercase; letter-spacing:0.08em; opacity:0; transform:translateY(10px); transition:all .2s; z-index:300}
 .toast.on{opacity:1; transform:translateY(0)}
 
-.table-scroll{overflow-x:auto; -webkit-overflow-scrolling:touch}
-
-/* =======================================================
-   MÓVIL — barra inferior fija + tarjetas táctiles
-   ======================================================= */
 @media(max-width:820px){
   html{-webkit-text-size-adjust:100%}
   body{flex-direction:column; padding-bottom:74px}
-
-  .sidebar{
-    width:100%; height:auto; position:sticky; top:0; z-index:140;
-    flex-direction:row; align-items:center; justify-content:space-between;
-    padding:14px 18px; border-right:none; border-bottom:1px solid var(--line);
-    background:var(--k);
-  }
+  .sidebar{width:100%; height:auto; position:sticky; top:0; z-index:140; flex-direction:row; align-items:center; justify-content:space-between; padding:14px 18px; border-right:none; border-bottom:1px solid var(--line); background:var(--k)}
   .brand{margin-bottom:0}
   .sidebar-foot{display:none}
-
-  nav{
-    position:fixed; left:0; right:0; bottom:0; z-index:150;
-    flex-direction:row; justify-content:space-around; gap:0;
-    background:var(--k); border-top:1px solid var(--line);
-    padding:6px 4px calc(6px + env(safe-area-inset-bottom));
-  }
-  nav button{
-    flex:1; text-align:center; padding:10px 4px; font-size:10px;
-    border-left:none; border-top:2px solid transparent; letter-spacing:0.06em;
-  }
+  nav{position:fixed; left:0; right:0; bottom:0; z-index:150; flex-direction:row; justify-content:space-around; gap:0; background:var(--k); border-top:1px solid var(--line); padding:6px 4px calc(6px + env(safe-area-inset-bottom))}
+  nav button{flex:1; text-align:center; padding:10px 4px; font-size:10px; border-left:none; border-top:2px solid transparent; letter-spacing:0.06em}
   nav button.on{border-left-color:transparent; border-top-color:var(--w); background:transparent}
-
   main{padding:20px 16px 8px}
   .view-head{align-items:flex-start}
   .view-head h1{font-size:28px}
   .view-head .btn{width:100%}
-
   select, input, textarea{font-size:16px; padding:12px 12px}
   .btn{padding:13px 18px; font-size:11.5px}
   .btn.small{padding:10px 14px}
 
-  .timer-card{padding:28px 20px}
-  .timer-display{font-size:clamp(44px,14vw,64px)}
-  .picker-row{flex-direction:column; max-width:100%}
-  .timer-controls{width:100%}
-  .timer-controls .btn{flex:1}
-
-  .entry-head{display:none}
-  .entry{
-    display:flex; flex-direction:column; gap:3px; position:relative; padding:14px 34px 14px 0;
-  }
-  .entry > div:nth-child(1){font-size:14px; color:var(--w); order:1}
-  .entry > div:nth-child(2){order:2; display:inline}
-  .entry > div:nth-child(3){order:2}
-  .entry > div:nth-child(2)::after{content:" · "}
-  .entry > div:nth-child(4){order:3; text-align:left; font-size:13px; margin-top:2px}
-  .entry .del{
-    position:absolute; top:14px; right:0; padding:4px 8px; order:4;
-  }
-
-  .proj-top{flex-direction:column; gap:10px}
+  .proj-card{flex-direction:column; align-items:flex-start; gap:8px}
   .proj-meta{text-align:left}
-  .task-row{
-    display:flex; flex-wrap:wrap; gap:6px 10px; padding:12px 30px 12px 0; position:relative;
-  }
-  .task-row > div:nth-child(1){flex:1 1 100%; font-size:14px}
-  .task-row [data-del-task]{position:absolute; top:12px; right:0; padding:4px 8px}
-  .new-task-row{flex-direction:column}
+
+  .task-row{display:flex; flex-direction:column; gap:6px; padding:14px 30px 14px 0; position:relative}
+  .task-actions{position:absolute; top:14px; right:0; flex-direction:column}
+
+  .entry-row{display:flex; flex-direction:column; gap:3px; padding:14px 30px 14px 0; position:relative}
+  .entry-row .del{position:absolute; top:14px; right:0}
+  .entry-row .horas{text-align:left}
+
+  .deadline-item{flex-direction:column; align-items:flex-start; gap:6px}
 
   .cards-row{grid-template-columns:1fr 1fr; gap:10px}
-  .stat-num{font-size:34px}
+  .stat-num{font-size:30px}
   .chart-row{grid-template-columns:1fr; gap:6px}
   .chart-row .cat{order:1}
   .chart-bar-track{order:2}
   .chart-row .mono{order:3; text-align:left}
-  table.report{min-width:520px}
-
-  .week-grid{
-    display:flex; overflow-x:auto; scroll-snap-type:x mandatory; gap:10px;
-    padding-bottom:6px; -webkit-overflow-scrolling:touch;
-  }
-  .day-col{min-width:78vw; scroll-snap-align:start}
-  .week-nav{flex-wrap:wrap; gap:10px 14px}
+  table.report{min-width:480px}
 
   .modal-bg{align-items:flex-end}
-  .modal{
-    width:100%; max-width:100%; max-height:88vh; border-radius:14px 14px 0 0;
-    border-bottom:none; padding:24px 20px calc(20px + env(safe-area-inset-bottom));
-  }
+  .modal{width:100%; max-width:100%; max-height:88vh; border-radius:14px 14px 0 0; padding:24px 20px calc(20px + env(safe-area-inset-bottom))}
   .field-row{flex-direction:column; gap:0}
   .modal-actions .btn{flex:1; text-align:center}
-
   .toast{left:16px; right:16px; bottom:88px; text-align:center}
 }
-
-@media(max-width:400px){
-  .cards-row{grid-template-columns:1fr}
-}
+@media(max-width:400px){ .cards-row{grid-template-columns:1fr} }
 </style>
 </head>
 <body>
@@ -274,9 +184,8 @@ table.report tr:hover td{background:var(--line-soft)}
     <div class="sub">Gestor de tiempo</div>
   </div>
   <nav>
-    <button class="nav-btn on" data-view="cronometro">Cronómetro</button>
-    <button class="nav-btn" data-view="proyectos">Proyectos</button>
-    <button class="nav-btn" data-view="semana">Semana</button>
+    <button class="nav-btn on" data-view="proyectos">Proyectos</button>
+    <button class="nav-btn" data-view="plazos">Plazos</button>
     <button class="nav-btn" data-view="informes">Informes</button>
   </nav>
   <div class="sidebar-foot">
@@ -286,42 +195,8 @@ table.report tr:hover td{background:var(--line-soft)}
 
 <main>
 
-  <!-- ===================== CRONÓMETRO ===================== -->
-  <section class="view on" id="view-cronometro">
-    <div class="view-head">
-      <h1>Cronómetro</h1>
-      <button class="btn" id="btn-manual">+ Entrada manual</button>
-    </div>
-
-    <div class="timer-card" id="timer-card">
-      <div class="timer-active-label" id="timer-idle-label">
-        <span class="label">Sin cronómetro activo</span>
-      </div>
-      <div class="timer-display mono" id="timer-display" style="display:none">00:00:00</div>
-      <div id="timer-info" style="display:none; text-align:center">
-        <div class="timer-task" id="timer-task-name"></div>
-        <div class="timer-project" id="timer-project-name"></div>
-      </div>
-      <div class="timer-warning" id="timer-warning" style="display:none"></div>
-
-      <div class="picker-row" id="picker-row">
-        <select id="sel-proyecto"><option value="">Selecciona proyecto…</option></select>
-        <select id="sel-tarea" disabled><option value="">Selecciona tarea…</option></select>
-      </div>
-      <div class="timer-controls">
-        <button class="btn primary" id="btn-start">Iniciar</button>
-        <button class="btn danger" id="btn-stop" style="display:none">Parar</button>
-      </div>
-    </div>
-
-    <h3 style="font-size:16px; margin-bottom:10px; color:var(--g); font-family:'DM Mono',monospace; text-transform:uppercase; letter-spacing:0.08em; font-weight:400">Últimas entradas</h3>
-    <div class="entries" id="entries-list">
-      <div class="entry entry-head"><div>Tarea</div><div>Proyecto</div><div>Categoría</div><div style="text-align:right">Duración</div><div></div></div>
-    </div>
-  </section>
-
-  <!-- ===================== PROYECTOS ===================== -->
-  <section class="view" id="view-proyectos">
+  <!-- ===================== PROYECTOS (lista) ===================== -->
+  <section class="view on" id="view-proyectos">
     <div class="view-head">
       <h1>Proyectos</h1>
       <button class="btn primary" id="btn-new-proyecto">+ Nuevo proyecto</button>
@@ -329,39 +204,49 @@ table.report tr:hover td{background:var(--line-soft)}
     <div class="proj-grid" id="proj-grid"></div>
   </section>
 
-  <!-- ===================== SEMANA ===================== -->
-  <section class="view" id="view-semana">
-    <div class="view-head">
-      <h1>Semana</h1>
+  <!-- ===================== PROYECTO (detalle) ===================== -->
+  <section class="view" id="view-proyecto-detalle">
+    <button class="back-link" id="btn-back-proyectos">← Proyectos</button>
+    <div class="proj-detail-head">
+      <div>
+        <h1 id="pd-nombre">—</h1>
+        <div class="proj-client" id="pd-cliente"></div>
+      </div>
+      <div class="proj-meta" id="pd-horas"></div>
     </div>
-    <div class="week-nav">
-      <button class="btn small" id="week-prev">← Anterior</button>
-      <span class="label" id="week-label">—</span>
-      <button class="btn small" id="week-next">Siguiente →</button>
-      <button class="btn small ghost" id="week-today">Hoy</button>
+
+    <div class="section-title">
+      <span>Tareas</span>
+      <button class="btn small" id="btn-new-tarea">+ Tarea</button>
     </div>
-    <div class="week-grid" id="week-grid"></div>
+    <div id="pd-tareas"></div>
+
+    <div class="section-title">
+      <span>Registro de horas</span>
+      <button class="btn small" id="btn-new-entrada">+ Registrar tiempo</button>
+    </div>
+    <div id="pd-entradas"></div>
+  </section>
+
+  <!-- ===================== PLAZOS ===================== -->
+  <section class="view" id="view-plazos">
+    <div class="view-head"><h1>Plazos</h1></div>
+    <div id="plazos-list"></div>
   </section>
 
   <!-- ===================== INFORMES ===================== -->
   <section class="view" id="view-informes">
-    <div class="view-head">
-      <h1>Informes</h1>
-      <button class="btn" id="btn-export">Exportar CSV</button>
-    </div>
-
+    <div class="view-head"><h1>Informes</h1></div>
     <div class="cards-row" id="informe-cards"></div>
-
     <div class="chart-block">
-      <h3 style="font-size:16px; margin-bottom:14px; color:var(--g); font-family:'DM Mono',monospace; text-transform:uppercase; letter-spacing:0.08em; font-weight:400">Horas por categoría</h3>
-      <div id="chart-categorias"></div>
+      <h3 style="font-size:16px; margin-bottom:14px; color:var(--g); font-family:'DM Mono',monospace; text-transform:uppercase; letter-spacing:0.08em; font-weight:400">Horas por proyecto</h3>
+      <div id="chart-proyectos"></div>
     </div>
-
     <div class="chart-block">
-      <h3 style="font-size:16px; margin-bottom:14px; color:var(--g); font-family:'DM Mono',monospace; text-transform:uppercase; letter-spacing:0.08em; font-weight:400">Rentabilidad por proyecto (€ / hora)</h3>
+      <h3 style="font-size:16px; margin-bottom:14px; color:var(--g); font-family:'DM Mono',monospace; text-transform:uppercase; letter-spacing:0.08em; font-weight:400">Tareas con más horas</h3>
       <div class="table-scroll">
-        <table class="report" id="tabla-rentabilidad">
-          <thead><tr><th>Proyecto</th><th>Cliente</th><th>Horas</th><th>Ticket</th><th>€ / hora</th></tr></thead>
+        <table class="report" id="tabla-top">
+          <thead><tr><th>Tarea</th><th>Proyecto</th><th>Horas</th><th>Estado</th></tr></thead>
           <tbody></tbody>
         </table>
       </div>
@@ -371,53 +256,66 @@ table.report tr:hover td{background:var(--line-soft)}
 </main>
 
 <!-- ===================== MODALES ===================== -->
-<div class="modal-bg" id="modal-manual">
-  <div class="modal">
-    <h2>Entrada manual</h2>
-    <div class="field">
-      <label class="label">Proyecto</label>
-      <select id="man-proyecto"></select>
-    </div>
-    <div class="field">
-      <label class="label">Tarea</label>
-      <select id="man-tarea"></select>
-    </div>
-    <div class="field-row">
-      <div class="field"><label class="label">Inicio</label><input type="datetime-local" id="man-inicio"></div>
-      <div class="field"><label class="label">Fin</label><input type="datetime-local" id="man-fin"></div>
-    </div>
-    <div class="field"><label class="label">Nota (opcional)</label><input type="text" id="man-nota"></div>
-    <div class="modal-actions">
-      <button class="btn ghost" data-close="modal-manual">Cancelar</button>
-      <button class="btn primary" id="man-guardar">Guardar</button>
-    </div>
-  </div>
-</div>
-
 <div class="modal-bg" id="modal-proyecto">
   <div class="modal">
     <h2>Nuevo proyecto</h2>
     <div class="field"><label class="label">Nombre</label><input type="text" id="np-nombre"></div>
-    <div class="field"><label class="label">Cliente</label><input type="text" id="np-cliente" placeholder="Nombre del cliente (se crea si no existe)"></div>
-    <div class="field-row">
-      <div class="field">
-        <label class="label">Tipo de proyecto</label>
-        <select id="np-tipo">
-          <option value="cliente" selected>Cliente</option>
-          <option value="interno">Interno</option>
-          <option value="personal">Personal</option>
-          <option value="otro">Otro</option>
-        </select>
-      </div>
-      <div class="field"><label class="label">Presupuesto (horas)</label><input type="number" id="np-horas" step="0.5"></div>
-    </div>
-    <div class="field-row">
-      <div class="field"><label class="label">Ticket (€)</label><input type="number" id="np-ticket" step="1"></div>
-      <div class="field"><label class="label">Fecha límite</label><input type="date" id="np-fecha-limite"></div>
-    </div>
+    <div class="field"><label class="label">Cliente (opcional)</label><input type="text" id="np-cliente"></div>
+    <div class="field"><label class="label">Fecha de inicio</label><input type="date" id="np-fecha"></div>
     <div class="modal-actions">
       <button class="btn ghost" data-close="modal-proyecto">Cancelar</button>
       <button class="btn primary" id="np-guardar">Crear</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-bg" id="modal-tarea">
+  <div class="modal">
+    <h2 id="nt-titulo-modal">Nueva tarea</h2>
+    <input type="hidden" id="nt-id">
+    <div class="field"><label class="label">Título</label><input type="text" id="nt-titulo"></div>
+    <div class="field"><label class="label">Descripción (opcional)</label><textarea id="nt-desc" rows="3"></textarea></div>
+    <div class="field-row">
+      <div class="field"><label class="label">Fecha límite</label><input type="date" id="nt-fecha"></div>
+      <div class="field">
+        <label class="label">Prioridad</label>
+        <select id="nt-prioridad">
+          <option value="alta">Alta</option>
+          <option value="media" selected>Media</option>
+          <option value="baja">Baja</option>
+        </select>
+      </div>
+    </div>
+    <div class="field">
+      <label class="label">Estado</label>
+      <select id="nt-estado">
+        <option value="pendiente">Pendiente</option>
+        <option value="en_curso">En curso</option>
+        <option value="completada">Completada</option>
+      </select>
+    </div>
+    <div class="modal-actions">
+      <button class="btn ghost" data-close="modal-tarea">Cancelar</button>
+      <button class="btn primary" id="nt-guardar">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-bg" id="modal-entrada">
+  <div class="modal">
+    <h2>Registrar tiempo</h2>
+    <div class="field">
+      <label class="label">Tarea</label>
+      <select id="ne-tarea"></select>
+    </div>
+    <div class="field-row">
+      <div class="field"><label class="label">Fecha</label><input type="date" id="ne-fecha"></div>
+      <div class="field"><label class="label">Horas</label><input type="number" id="ne-horas" min="0.5" step="0.5" placeholder="1.5"></div>
+    </div>
+    <div class="field"><label class="label">Descripción</label><textarea id="ne-desc" rows="3" placeholder="¿En qué has trabajado?"></textarea></div>
+    <div class="modal-actions">
+      <button class="btn ghost" data-close="modal-entrada">Cancelar</button>
+      <button class="btn primary" id="ne-guardar">Guardar</button>
     </div>
   </div>
 </div>
@@ -426,207 +324,43 @@ table.report tr:hover td{background:var(--line-soft)}
 
 <script>
 const API = '/api';
-const CATEGORIAS = [
-  ['trabajo_profundo','Trabajo profundo'], ['reuniones','Reuniones'],
-  ['administracion','Administración'], ['comunicacion','Comunicación'],
-  ['formacion','Formación'], ['otro','Otro']
-];
+let state = { proyectoActual: null };
 
-let state = { proyectos: [], tareas: [], activo: null, timerInterval: null, weekOffset: 0 };
-
-function toast(msg){
-  const t = document.getElementById('toast');
-  t.textContent = msg; t.classList.add('on');
-  setTimeout(()=>t.classList.remove('on'), 2200);
-}
-
+function toast(msg){ const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('on'); setTimeout(()=>t.classList.remove('on'), 2200); }
 async function api(path, opts={}){
-  const res = await fetch(API + path, {
-    headers:{'Content-Type':'application/json'},
-    ...opts
-  });
+  const res = await fetch(API + path, { headers:{'Content-Type':'application/json'}, ...opts });
   if(!res.ok){ toast('Error: ' + res.status); throw new Error('API error ' + res.status); }
   return res.json();
 }
-
-function fmtDur(segundos){
-  segundos = Math.max(0, Math.round(segundos||0));
-  const h = Math.floor(segundos/3600), m = Math.floor((segundos%3600)/60), s = segundos%60;
-  return [h,m,s].map(n=>String(n).padStart(2,'0')).join(':');
-}
-function fmtHoras(segundos){ return (segundos/3600).toFixed(1) + 'h'; }
-function catLabel(c){ const f = CATEGORIAS.find(x=>x[0]===c); return f?f[1]:c; }
+function fmtFecha(f){ if(!f) return '—'; const d = new Date(f + 'T00:00:00'); return d.toLocaleDateString('es-ES', {day:'numeric', month:'short'}); }
+function diasHasta(f){ const hoy = new Date(); hoy.setHours(0,0,0,0); const d = new Date(f + 'T00:00:00'); return Math.round((d-hoy)/86400000); }
+function estadoLabel(e){ return {pendiente:'Pendiente', en_curso:'En curso', completada:'Completada'}[e] || e; }
 
 /* ---------------- NAV ---------------- */
-document.querySelectorAll('.nav-btn').forEach(btn=>{
-  btn.addEventListener('click', ()=>{
-    document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('on'));
-    document.querySelectorAll('.view').forEach(v=>v.classList.remove('on'));
-    btn.classList.add('on');
-    document.getElementById('view-' + btn.dataset.view).classList.add('on');
-    if(btn.dataset.view === 'proyectos') cargarProyectos();
-    if(btn.dataset.view === 'informes') cargarInformes();
-    if(btn.dataset.view === 'semana') cargarSemana();
-  });
-});
-
-/* ---------------- CRONÓMETRO ---------------- */
-async function cargarProyectosSelect(select, incluirVacio){
-  const proyectos = await api('/proyectos');
-  state.proyectos = proyectos;
-  select.innerHTML = (incluirVacio ? '<option value="">Selecciona proyecto…</option>' : '') +
-    proyectos.filter(p=>p.estado!=='cerrado').map(p=>`<option value="${p.id}">${p.nombre}</option>`).join('');
+function irAVista(id){
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('on'));
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('on'));
+  const btn = document.querySelector(`.nav-btn[data-view="${id}"]`);
+  if(btn) btn.classList.add('on');
+  document.getElementById('view-' + id).classList.add('on');
+  if(id === 'proyectos') cargarProyectos();
+  if(id === 'plazos') cargarPlazos();
+  if(id === 'informes') cargarInformes();
 }
+document.querySelectorAll('.nav-btn').forEach(btn=>btn.addEventListener('click', ()=>irAVista(btn.dataset.view)));
 
-async function cargarTareasSelect(select, proyectoId){
-  if(!proyectoId){ select.innerHTML = '<option value="">Selecciona tarea…</option>'; select.disabled = true; return; }
-  const tareas = await api('/tareas?proyecto_id=' + proyectoId);
-  select.disabled = false;
-  select.innerHTML = '<option value="">Selecciona tarea…</option>' +
-    tareas.map(t=>`<option value="${t.id}">${t.nombre}</option>`).join('');
-}
-
-document.getElementById('sel-proyecto').addEventListener('change', e=>{
-  cargarTareasSelect(document.getElementById('sel-tarea'), e.target.value);
-});
-
-document.getElementById('btn-start').addEventListener('click', async ()=>{
-  const tareaId = document.getElementById('sel-tarea').value;
-  if(!tareaId){ toast('Elige una tarea primero'); return; }
-  const entrada = await api('/tiempo', { method:'POST', body: JSON.stringify({ tarea_id: tareaId }) });
-  state.activo = entrada;
-  refrescarTimerUI();
-  cargarEntradas();
-});
-
-document.getElementById('btn-stop').addEventListener('click', async ()=>{
-  if(!state.activo) return;
-  await api('/tiempo?id=' + state.activo.id, { method:'PATCH', body: JSON.stringify({ accion:'parar' }) });
-  state.activo = null;
-  refrescarTimerUI();
-  cargarEntradas();
-  cargarProyectosSelect(document.getElementById('sel-proyecto'), true);
-});
-
-function refrescarTimerUI(){
-  clearInterval(state.timerInterval);
-  const card = document.getElementById('timer-card');
-  const idleLabel = document.getElementById('timer-idle-label');
-  const display = document.getElementById('timer-display');
-  const info = document.getElementById('timer-info');
-  const picker = document.getElementById('picker-row');
-  const btnStart = document.getElementById('btn-start');
-  const btnStop = document.getElementById('btn-stop');
-  const warning = document.getElementById('timer-warning');
-
-  if(state.activo){
-    card.classList.add('running');
-    idleLabel.innerHTML = '<span class="rec-dot"></span><span class="label" style="color:var(--accent)">En marcha</span>';
-    display.style.display = 'block';
-    info.style.display = 'block';
-    document.getElementById('timer-task-name').textContent = state.activo.tarea_nombre;
-    document.getElementById('timer-project-name').textContent = state.activo.proyecto_nombre;
-    picker.style.display = 'none';
-    btnStart.style.display = 'none';
-    btnStop.style.display = 'inline-block';
-
-    const inicio = new Date(state.activo.inicio);
-    const tick = ()=>{
-      const seg = (Date.now() - inicio) / 1000;
-      display.textContent = fmtDur(seg);
-      if(seg > 3*3600){
-        warning.style.display = 'block';
-        warning.textContent = 'Llevas más de 3 horas — ¿sigues en esta tarea?';
-      } else { warning.style.display = 'none'; }
-    };
-    tick();
-    state.timerInterval = setInterval(tick, 1000);
-  } else {
-    card.classList.remove('running');
-    idleLabel.innerHTML = '<span class="label">Sin cronómetro activo</span>';
-    display.style.display = 'none';
-    info.style.display = 'none';
-    warning.style.display = 'none';
-    picker.style.display = 'flex';
-    btnStart.style.display = 'inline-block';
-    btnStop.style.display = 'none';
-  }
-}
-
-async function cargarEntradas(){
-  const entradas = await api('/tiempo');
-  const list = document.getElementById('entries-list');
-  list.innerHTML = '<div class="entry entry-head"><div>Tarea</div><div>Proyecto</div><div>Categoría</div><div style="text-align:right">Duración</div><div></div></div>';
-  entradas.filter(e=>e.duracion_segundos!==null).slice(0,25).forEach(e=>{
-    const row = document.createElement('div');
-    row.className = 'entry';
-    row.innerHTML = `
-      <div>${e.tarea_nombre}</div>
-      <div class="cat">${e.proyecto_nombre}</div>
-      <div class="cat">${catLabel(e.categoria)}</div>
-      <div class="dur">${fmtDur(e.duracion_segundos)}</div>
-      <div class="del" data-id="${e.id}">✕</div>`;
-    list.appendChild(row);
-  });
-  list.querySelectorAll('.del').forEach(el=>{
-    el.addEventListener('click', async ()=>{
-      await api('/tiempo?id=' + el.dataset.id, { method:'DELETE' });
-      cargarEntradas();
-    });
-  });
-}
-
-async function initCronometro(){
-  await cargarProyectosSelect(document.getElementById('sel-proyecto'), true);
-  const activo = await api('/tiempo?activo=1');
-  state.activo = activo;
-  refrescarTimerUI();
-  cargarEntradas();
-}
-
-/* ---------------- MODAL: ENTRADA MANUAL ---------------- */
 function openModal(id){ document.getElementById(id).classList.add('on'); }
 function closeModal(id){ document.getElementById(id).classList.remove('on'); }
 document.querySelectorAll('[data-close]').forEach(b=>b.addEventListener('click', ()=>closeModal(b.dataset.close)));
 
-document.getElementById('btn-manual').addEventListener('click', async ()=>{
-  await cargarProyectosSelect(document.getElementById('man-proyecto'), false);
-  await cargarTareasSelect(document.getElementById('man-tarea'), document.getElementById('man-proyecto').value);
-  openModal('modal-manual');
-});
-document.getElementById('man-proyecto').addEventListener('change', e=>{
-  cargarTareasSelect(document.getElementById('man-tarea'), e.target.value);
-});
-document.getElementById('man-guardar').addEventListener('click', async ()=>{
-  const tareaId = document.getElementById('man-tarea').value;
-  const inicio = document.getElementById('man-inicio').value;
-  const fin = document.getElementById('man-fin').value;
-  const nota = document.getElementById('man-nota').value;
-  if(!tareaId || !inicio || !fin){ toast('Completa proyecto, tarea, inicio y fin'); return; }
-  await api('/tiempo', { method:'POST', body: JSON.stringify({ tarea_id: tareaId, manual:true, inicio, fin, nota }) });
-  closeModal('modal-manual');
-  cargarEntradas();
-  toast('Entrada guardada');
-});
-
 /* ---------------- PROYECTOS ---------------- */
 document.getElementById('btn-new-proyecto').addEventListener('click', ()=>openModal('modal-proyecto'));
 document.getElementById('np-guardar').addEventListener('click', async ()=>{
-  const nombre = document.getElementById('np-nombre').value;
+  const nombre = document.getElementById('np-nombre').value.trim();
   if(!nombre){ toast('Falta el nombre'); return; }
-  let clienteId = null;
-  const clienteNombre = document.getElementById('np-cliente').value.trim();
-  if(clienteNombre){
-    const clientes = await api('/clientes');
-    const existente = clientes.find(c=>c.nombre.toLowerCase() === clienteNombre.toLowerCase());
-    clienteId = existente ? existente.id : (await api('/clientes', { method:'POST', body: JSON.stringify({ nombre: clienteNombre }) })).id;
-  }
   await api('/proyectos', { method:'POST', body: JSON.stringify({
-    nombre, cliente_id: clienteId,
-    tipo_servicio: document.getElementById('np-tipo').value,
-    presupuesto_horas: document.getElementById('np-horas').value || null,
-    ticket_eur: document.getElementById('np-ticket').value || null,
-    fecha_limite: document.getElementById('np-fecha-limite').value || null
+    nombre, cliente: document.getElementById('np-cliente').value.trim() || null,
+    fecha_inicio: document.getElementById('np-fecha').value || null
   })});
   closeModal('modal-proyecto');
   document.getElementById('np-nombre').value = '';
@@ -639,164 +373,185 @@ async function cargarProyectos(){
   const proyectos = await api('/proyectos');
   const grid = document.getElementById('proj-grid');
   if(proyectos.length === 0){ grid.innerHTML = '<div class="empty">Todavía no hay proyectos</div>'; return; }
-  grid.innerHTML = '';
-  proyectos.forEach(p=>{
-    const horasReales = p.segundos_totales / 3600;
-    const pres = parseFloat(p.presupuesto_horas) || 0;
-    const pct = pres > 0 ? Math.min(100, (horasReales/pres)*100) : 0;
-    const barClass = pres > 0 ? (horasReales > pres ? 'over' : (pct > 80 ? 'warn' : '')) : '';
-    const card = document.createElement('div');
-    card.className = 'proj-card';
-    card.innerHTML = `
-      <div class="proj-top" data-toggle="${p.id}">
-        <div>
-          <div class="proj-name">${p.nombre}</div>
-          <div class="proj-client">${p.cliente_nombre || 'Sin cliente'} · ${p.tipo_servicio}</div>
-        </div>
-        <div class="proj-meta">
-          ${fmtHoras(p.segundos_totales)} ${pres ? ' / ' + pres + 'h' : ''}<br>
-          ${p.estado}
-        </div>
+  grid.innerHTML = proyectos.map(p => `
+    <div class="proj-card" data-open="${p.id}">
+      <div>
+        <div class="proj-name">${p.nombre}</div>
+        <div class="proj-client">${p.cliente || 'Sin cliente'} · ${p.num_tareas} tarea${p.num_tareas==1?'':'s'}</div>
       </div>
-      ${pres ? `<div class="bar-track"><div class="bar-fill ${barClass}" style="width:${pct}%"></div></div>` : ''}
-      <div class="proj-tasks" id="tasks-${p.id}">
-        <div class="task-list" id="task-list-${p.id}"></div>
-        <div class="new-task-row">
-          <input type="text" placeholder="Nueva tarea…" id="new-task-name-${p.id}">
-          <select id="new-task-cat-${p.id}">${CATEGORIAS.map(c=>`<option value="${c[0]}">${c[1]}</option>`).join('')}</select>
-          <button class="btn small" data-add-task="${p.id}">Añadir</button>
-        </div>
-      </div>`;
-    grid.appendChild(card);
-  });
-
-  grid.querySelectorAll('[data-toggle]').forEach(el=>{
-    el.addEventListener('click', async ()=>{
-      const id = el.dataset.toggle;
-      const panel = document.getElementById('tasks-' + id);
-      panel.classList.toggle('on');
-      if(panel.classList.contains('on')) cargarTareasProyecto(id);
-    });
-  });
-  grid.querySelectorAll('[data-add-task]').forEach(el=>{
-    el.addEventListener('click', async ()=>{
-      const id = el.dataset.addTask;
-      const nombre = document.getElementById('new-task-name-'+id).value;
-      const categoria = document.getElementById('new-task-cat-'+id).value;
-      if(!nombre) return;
-      await api('/tareas', { method:'POST', body: JSON.stringify({ proyecto_id:id, nombre, categoria }) });
-      document.getElementById('new-task-name-'+id).value = '';
-      cargarTareasProyecto(id);
-    });
-  });
-}
-
-async function cargarTareasProyecto(proyectoId){
-  const tareas = await api('/tareas?proyecto_id=' + proyectoId);
-  const list = document.getElementById('task-list-' + proyectoId);
-  if(tareas.length === 0){ list.innerHTML = '<div class="empty">Sin tareas todavía</div>'; return; }
-  list.innerHTML = tareas.map(t => `
-    <div class="task-row">
-      <div>${t.nombre}</div>
-      <div class="cat">${catLabel(t.categoria)}</div>
-      <div class="mono" style="font-size:12px">${fmtHoras(t.segundos_totales)}</div>
-      <div><span class="pill ${t.estado==='completada'?'on-track':''}">${t.estado.replace('_',' ')}</span></div>
-      <div class="del" data-del-task="${t.id}" style="cursor:pointer;color:var(--g)">✕</div>
+      <div class="proj-meta">${Number(p.horas_totales).toFixed(1)}h<br>${p.estado}</div>
     </div>`).join('');
-  list.querySelectorAll('[data-del-task]').forEach(el=>{
-    el.addEventListener('click', async ()=>{
-      await api('/tareas?id=' + el.dataset.delTask, { method:'DELETE' });
-      cargarTareasProyecto(proyectoId);
-    });
-  });
+  grid.querySelectorAll('[data-open]').forEach(el=>el.addEventListener('click', ()=>abrirProyecto(el.dataset.open)));
 }
 
-/* ---------------- SEMANA ---------------- */
-function inicioSemana(offset){
-  const d = new Date();
-  d.setDate(d.getDate() + offset*7);
-  const day = (d.getDay() + 6) % 7; // lunes = 0
-  d.setDate(d.getDate() - day);
-  d.setHours(0,0,0,0);
-  return d;
+document.getElementById('btn-back-proyectos').addEventListener('click', ()=>irAVista('proyectos'));
+
+async function abrirProyecto(id){
+  state.proyectoActual = id;
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('on'));
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('on'));
+  document.getElementById('view-proyecto-detalle').classList.add('on');
+  await cargarDetalleProyecto();
 }
-document.getElementById('week-prev').addEventListener('click', ()=>{ state.weekOffset--; cargarSemana(); });
-document.getElementById('week-next').addEventListener('click', ()=>{ state.weekOffset++; cargarSemana(); });
-document.getElementById('week-today').addEventListener('click', ()=>{ state.weekOffset = 0; cargarSemana(); });
 
-async function cargarSemana(){
-  const inicio = inicioSemana(state.weekOffset);
-  const fechaStr = inicio.toISOString().slice(0,10);
-  document.getElementById('week-label').textContent = inicio.toLocaleDateString('es-ES', {day:'numeric', month:'long', year:'numeric'});
-  const entradas = await api('/resumen?tipo=semana&fecha=' + fechaStr);
+async function cargarDetalleProyecto(){
+  const id = state.proyectoActual;
+  const proyectos = await api('/proyectos');
+  const p = proyectos.find(x => String(x.id) === String(id));
+  if(!p) return;
+  document.getElementById('pd-nombre').textContent = p.nombre;
+  document.getElementById('pd-cliente').textContent = (p.cliente || 'Sin cliente') + ' · ' + p.estado;
+  document.getElementById('pd-horas').textContent = Number(p.horas_totales).toFixed(1) + 'h registradas';
 
-  const dias = ['Lunes','Martes','Miércoles','Jueves','Viernes','Sábado','Domingo'];
-  const grid = document.getElementById('week-grid');
-  grid.innerHTML = '';
-  for(let i=0;i<7;i++){
-    const d = new Date(inicio); d.setDate(d.getDate()+i);
-    const dStr = d.toISOString().slice(0,10);
-    const delDia = entradas.filter(e=>e.inicio.slice(0,10) === dStr && e.duracion_segundos!==null);
-    const total = delDia.reduce((s,e)=>s+e.duracion_segundos,0);
-    const col = document.createElement('div');
-    col.className = 'day-col';
-    col.innerHTML = `<div class="day-head">${dias[i]} ${d.getDate()}</div>` +
-      (delDia.length ? delDia.map(e=>`<div class="day-entry">${e.tarea_nombre}<div class="t">${e.proyecto_nombre} · ${fmtDur(e.duracion_segundos)}</div></div>`).join('') : '<div class="empty" style="padding:10px 0">—</div>') +
-      (total ? `<div class="day-total">${fmtHoras(total)}</div>` : '');
-    grid.appendChild(col);
-  }
+  const tareas = await api('/tareas?proyecto_id=' + id);
+  const cont = document.getElementById('pd-tareas');
+  cont.innerHTML = tareas.length ? tareas.map(t => `
+    <div class="task-row">
+      <div>
+        <div class="title">${t.titulo}</div>
+        ${t.descripcion ? `<div class="desc">${t.descripcion}</div>` : ''}
+      </div>
+      <div><span class="pill ${t.prioridad==='alta'?'high':''}">${t.prioridad}</span></div>
+      <div><span class="pill ${t.estado==='completada'?'on-track':''}">${estadoLabel(t.estado)}</span></div>
+      <div class="deadline">${fmtFecha(t.fecha_limite)}</div>
+      <div class="task-actions">
+        <button class="icon-btn" data-edit-tarea="${t.id}" title="Editar">✎</button>
+        <button class="icon-btn" data-del-tarea="${t.id}" title="Eliminar">✕</button>
+      </div>
+    </div>`).join('') : '<div class="empty">Sin tareas todavía</div>';
+
+  cont.querySelectorAll('[data-edit-tarea]').forEach(el=>el.addEventListener('click', ()=>editarTarea(tareas.find(t=>String(t.id)===el.dataset.editTarea))));
+  cont.querySelectorAll('[data-del-tarea]').forEach(el=>el.addEventListener('click', async ()=>{
+    await api('/tareas?id=' + el.dataset.delTarea, { method:'DELETE' });
+    cargarDetalleProyecto();
+  }));
+
+  const entradas = await api('/tiempo?proyecto_id=' + id);
+  const contE = document.getElementById('pd-entradas');
+  contE.innerHTML = entradas.length ? entradas.map(e => `
+    <div class="entry-row">
+      <div class="fecha">${fmtFecha(e.fecha)}</div>
+      <div>
+        <div class="desc">${e.descripcion || '—'}</div>
+        <div class="tarea-ref">${e.tarea_titulo}</div>
+      </div>
+      <div class="horas">${Number(e.horas).toFixed(1)}h</div>
+      <div class="del" data-del-entrada="${e.id}">✕</div>
+    </div>`).join('') : '<div class="empty">Sin horas registradas</div>';
+  contE.querySelectorAll('[data-del-entrada]').forEach(el=>el.addEventListener('click', async ()=>{
+    await api('/tiempo?id=' + el.dataset.delEntrada, { method:'DELETE' });
+    cargarDetalleProyecto();
+  }));
+}
+
+/* ---------------- TAREAS ---------------- */
+document.getElementById('btn-new-tarea').addEventListener('click', ()=>{
+  document.getElementById('nt-titulo-modal').textContent = 'Nueva tarea';
+  document.getElementById('nt-id').value = '';
+  document.getElementById('nt-titulo').value = '';
+  document.getElementById('nt-desc').value = '';
+  document.getElementById('nt-fecha').value = '';
+  document.getElementById('nt-prioridad').value = 'media';
+  document.getElementById('nt-estado').value = 'pendiente';
+  openModal('modal-tarea');
+});
+function editarTarea(t){
+  document.getElementById('nt-titulo-modal').textContent = 'Editar tarea';
+  document.getElementById('nt-id').value = t.id;
+  document.getElementById('nt-titulo').value = t.titulo;
+  document.getElementById('nt-desc').value = t.descripcion || '';
+  document.getElementById('nt-fecha').value = t.fecha_limite ? t.fecha_limite.slice(0,10) : '';
+  document.getElementById('nt-prioridad').value = t.prioridad;
+  document.getElementById('nt-estado').value = t.estado;
+  openModal('modal-tarea');
+}
+document.getElementById('nt-guardar').addEventListener('click', async ()=>{
+  const titulo = document.getElementById('nt-titulo').value.trim();
+  if(!titulo){ toast('Falta el título'); return; }
+  const id = document.getElementById('nt-id').value;
+  const payload = {
+    titulo, descripcion: document.getElementById('nt-desc').value.trim() || null,
+    fecha_limite: document.getElementById('nt-fecha').value || null,
+    prioridad: document.getElementById('nt-prioridad').value,
+    estado: document.getElementById('nt-estado').value
+  };
+  if(id){ await api('/tareas?id=' + id, { method:'PATCH', body: JSON.stringify(payload) }); }
+  else { await api('/tareas', { method:'POST', body: JSON.stringify({ ...payload, proyecto_id: state.proyectoActual }) }); }
+  closeModal('modal-tarea');
+  cargarDetalleProyecto();
+  toast('Tarea guardada');
+});
+
+/* ---------------- ENTRADAS DE TIEMPO ---------------- */
+document.getElementById('btn-new-entrada').addEventListener('click', async ()=>{
+  const tareas = await api('/tareas?proyecto_id=' + state.proyectoActual);
+  const sel = document.getElementById('ne-tarea');
+  sel.innerHTML = tareas.map(t => `<option value="${t.id}">${t.titulo}</option>`).join('') || '<option value="">Crea una tarea primero</option>';
+  document.getElementById('ne-fecha').value = new Date().toISOString().slice(0,10);
+  document.getElementById('ne-horas').value = '';
+  document.getElementById('ne-desc').value = '';
+  openModal('modal-entrada');
+});
+document.getElementById('ne-guardar').addEventListener('click', async ()=>{
+  const tareaId = document.getElementById('ne-tarea').value;
+  const fecha = document.getElementById('ne-fecha').value;
+  const horas = parseFloat(document.getElementById('ne-horas').value);
+  if(!tareaId || !fecha || !horas){ toast('Completa tarea, fecha y horas'); return; }
+  await api('/tiempo', { method:'POST', body: JSON.stringify({
+    tarea_id: tareaId, fecha, horas, descripcion: document.getElementById('ne-desc').value.trim() || null
+  })});
+  closeModal('modal-entrada');
+  cargarDetalleProyecto();
+  toast('Tiempo registrado');
+});
+
+/* ---------------- PLAZOS ---------------- */
+async function cargarPlazos(){
+  const tareas = await api('/tareas');
+  const pendientes = tareas.filter(t => t.estado !== 'completada' && t.fecha_limite);
+  pendientes.sort((a,b) => new Date(a.fecha_limite) - new Date(b.fecha_limite));
+  const cont = document.getElementById('plazos-list');
+  if(pendientes.length === 0){ cont.innerHTML = '<div class="empty">Sin plazos pendientes</div>'; return; }
+  cont.innerHTML = pendientes.map(t => {
+    const dias = diasHasta(t.fecha_limite);
+    const cls = dias < 0 ? 'overdue' : (dias <= 3 ? 'soon' : '');
+    const texto = dias < 0 ? `Hace ${Math.abs(dias)}d` : dias === 0 ? 'Hoy' : dias === 1 ? 'Mañana' : `En ${dias}d`;
+    return `
+      <div class="deadline-item ${cls}" data-open-proj="${t.proyecto_id}">
+        <div class="deadline-info">
+          <div class="t">${t.titulo}</div>
+          <div class="p">${t.proyecto_nombre}</div>
+        </div>
+        <div class="deadline-date ${cls}">${texto}</div>
+      </div>`;
+  }).join('');
+  cont.querySelectorAll('[data-open-proj]').forEach(el=>el.addEventListener('click', ()=>abrirProyecto(el.dataset.openProj)));
 }
 
 /* ---------------- INFORMES ---------------- */
 async function cargarInformes(){
-  const proyectos = await api('/resumen?tipo=proyectos');
-  const categorias = await api('/resumen?tipo=categorias');
-  const rentabilidad = await api('/resumen?tipo=rentabilidad');
-
-  const totalHoras = proyectos.reduce((s,p)=>s+parseFloat(p.horas_reales||0),0);
-  const activos = state.proyectos.filter(p=>p.estado==='activo').length;
-  const sobrepresupuesto = proyectos.filter(p=>p.presupuesto_horas && parseFloat(p.horas_reales) > parseFloat(p.presupuesto_horas)).length;
-
+  const data = await api('/informes');
   document.getElementById('informe-cards').innerHTML = `
-    <div class="stat-card"><div class="label">Horas totales registradas</div><div class="stat-num">${totalHoras.toFixed(1)}</div></div>
-    <div class="stat-card"><div class="label">Proyectos registrados</div><div class="stat-num">${proyectos.length}</div></div>
-    <div class="stat-card"><div class="label">Proyectos sobre presupuesto</div><div class="stat-num" style="color:${sobrepresupuesto?'var(--accent)':'var(--w)'}">${sobrepresupuesto}</div></div>
+    <div class="stat-card"><div class="label">Horas totales</div><div class="stat-num">${data.metricas.horas_totales.toFixed(1)}</div></div>
+    <div class="stat-card"><div class="label">Tareas / proyecto</div><div class="stat-num">${data.metricas.avg_tareas_proyecto.toFixed(1)}</div></div>
+    <div class="stat-card"><div class="label">% Completado</div><div class="stat-num">${data.metricas.tasa_completado}%</div></div>
+    <div class="stat-card"><div class="label">Horas / tarea</div><div class="stat-num">${data.metricas.avg_horas_tarea.toFixed(1)}</div></div>
   `;
-
-  const maxCat = Math.max(1, ...categorias.map(c=>parseFloat(c.horas)));
-  document.getElementById('chart-categorias').innerHTML = categorias.map(c=>`
+  const maxH = Math.max(1, ...data.horas_por_proyecto.map(p=>p.horas));
+  document.getElementById('chart-proyectos').innerHTML = data.horas_por_proyecto.map(p => `
     <div class="chart-row">
-      <div class="cat">${catLabel(c.categoria)}</div>
-      <div class="chart-bar-track"><div class="chart-bar-fill" style="width:${(parseFloat(c.horas)/maxCat)*100}%"></div></div>
-      <div class="mono" style="text-align:right">${parseFloat(c.horas).toFixed(1)}h</div>
+      <div class="mono" style="font-size:12px">${p.nombre}</div>
+      <div class="chart-bar-track"><div class="chart-bar-fill" style="width:${(p.horas/maxH)*100}%"></div></div>
+      <div class="mono" style="text-align:right">${p.horas.toFixed(1)}h</div>
     </div>`).join('') || '<div class="empty">Sin datos todavía</div>';
 
-  const tbody = document.querySelector('#tabla-rentabilidad tbody');
-  tbody.innerHTML = rentabilidad.map(r=>`
-    <tr>
-      <td>${r.nombre}</td>
-      <td>${r.cliente_nombre||'—'}</td>
-      <td>${parseFloat(r.horas_reales).toFixed(1)}h</td>
-      <td>${r.ticket_eur ? r.ticket_eur+'€' : '—'}</td>
-      <td>${r.eur_por_hora ? parseFloat(r.eur_por_hora).toFixed(0)+'€/h' : '—'}</td>
-    </tr>`).join('') || '<tr><td colspan="5" class="empty">Sin datos todavía</td></tr>';
+  const tbody = document.querySelector('#tabla-top tbody');
+  tbody.innerHTML = data.tareas_top.map(t => `
+    <tr><td>${t.titulo}</td><td>${t.proyecto_nombre}</td><td>${Number(t.horas).toFixed(1)}h</td><td>${estadoLabel(t.estado)}</td></tr>
+  `).join('') || '<tr><td colspan="4" class="empty">Sin datos todavía</td></tr>';
 }
 
-/* ---------------- EXPORT CSV ---------------- */
-document.getElementById('btn-export').addEventListener('click', async ()=>{
-  const entradas = await api('/tiempo');
-  const filas = entradas.filter(e=>e.duracion_segundos!==null).map(e =>
-    [e.proyecto_nombre, e.tarea_nombre, catLabel(e.categoria), e.inicio, e.fin, (e.duracion_segundos/3600).toFixed(2)].join(';')
-  );
-  const csv = 'Proyecto;Tarea;Categoría;Inicio;Fin;Horas\n' + filas.join('\n');
-  const blob = new Blob([csv], { type:'text/csv' });
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = 'horas_' + new Date().toISOString().slice(0,10) + '.csv';
-  a.click();
-});
-
-initCronometro();
+cargarProyectos();
 </script>
 </body>
 </html>

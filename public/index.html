@@ -574,10 +574,9 @@ table.report tr:hover td{background:var(--surface-2)}
 
 <script>
 /* ============================================================
-   ALMACÉN — localStorage, sin backend
+   ALMACÉN — API online (Netlify DB), detrás del muro de acceso
    ============================================================ */
-const STORE_KEY = 'horas_v3_store';
-const TIMER_KEY = 'horas_v3_timer_activo';
+const TIMER_KEY = 'horas_v3_timer_activo'; // el cronómetro activo sigue en este navegador, es solo conveniencia local
 
 function uid(){ return Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
 
@@ -592,17 +591,36 @@ function defaultStore(){
     proyectos: [], tareas: [], entradas: [], actividad: [], colaboradores: [], proyecto_colaboradores: []
   };
 }
-let STORE = load();
-function load(){
+let STORE = defaultStore();
+
+async function loadRemote(){
   try{
-    const raw = localStorage.getItem(STORE_KEY);
-    if(!raw) return defaultStore();
-    const p = JSON.parse(raw);
+    const res = await fetch('/api/state');
+    if(!res.ok) throw new Error('No se pudo cargar');
+    const data = await res.json();
     const d = defaultStore();
-    return { ...d, ...p, ambitos: p.ambitos && p.ambitos.length ? p.ambitos : d.ambitos };
-  }catch(e){ return defaultStore(); }
+    if(data && Object.keys(data).length){
+      STORE = { ...d, ...data, ambitos: data.ambitos && data.ambitos.length ? data.ambitos : d.ambitos };
+    } else {
+      STORE = d; // primera vez: se guarda el estado inicial con los ámbitos por defecto
+      await save();
+    }
+  }catch(e){
+    toast('No se pudo conectar con el servidor');
+  }
 }
-function save(){ localStorage.setItem(STORE_KEY, JSON.stringify(STORE)); }
+
+let guardando = false;
+async function save(){
+  guardando = true;
+  try{
+    await fetch('/api/state', { method:'PUT', headers:{'Content-Type':'application/json'}, body: JSON.stringify(STORE) });
+  }catch(e){
+    toast('No se pudo guardar — revisa tu conexión');
+  }
+  guardando = false;
+}
+
 
 function getAmbito(id){ return STORE.ambitos.find(a=>a.id===id); }
 function getProyecto(id){ return STORE.proyectos.find(p=>p.id===id); }
@@ -1231,7 +1249,10 @@ document.getElementById('file-import').addEventListener('change', e=>{
 /* ============================================================
    ARRANQUE
    ============================================================ */
-renderProyectos();
+(async function boot(){
+  await loadRemote();
+  renderProyectos();
+})();
 </script>
 </body>
 </html>

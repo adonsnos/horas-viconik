@@ -1,0 +1,1259 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Horas</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F3EFE8; --surface:#FFFFFF; --surface-2:#FAF7F1;
+  --ink:#26211D; --muted:#948C81; --muted-2:#BEB6A9;
+  --border:#E9E1D3; --border-strong:#DCD2BF;
+  --radius-lg:22px; --radius:16px; --radius-sm:12px; --radius-pill:999px;
+  --shadow-sm:0 1px 2px rgba(38,33,29,0.05);
+  --shadow:0 2px 6px rgba(38,33,29,0.05), 0 10px 30px rgba(38,33,29,0.06);
+  --danger:#D14F4F; --danger-soft:#FBEBEA;
+  --ok:#2FA66A; --warn:#E0A22E;
+}
+*{box-sizing:border-box; margin:0; padding:0}
+html,body{height:100%}
+body{
+  background:var(--bg); color:var(--ink); font-family:'Plus Jakarta Sans',sans-serif; font-weight:400;
+  display:flex; min-height:100vh; -webkit-font-smoothing:antialiased;
+}
+.mono{font-family:'JetBrains Mono',monospace}
+h1,h2,h3{font-weight:800; letter-spacing:-0.02em}
+::selection{background:var(--ink); color:var(--surface)}
+button, input, select, textarea{font-family:inherit; font-size:inherit; color:inherit}
+.label{font-size:11px; text-transform:uppercase; letter-spacing:0.06em; color:var(--muted); font-weight:700}
+
+/* ---------- SIDEBAR ---------- */
+.sidebar{
+  width:236px; flex-shrink:0; height:100vh; position:sticky; top:0;
+  padding:24px 16px; display:flex; flex-direction:column; gap:4px;
+}
+.brand{padding:10px 12px 22px}
+.brand .name{font-size:21px; font-weight:800; letter-spacing:-0.03em}
+.brand .sub{font-size:11px; color:var(--muted); margin-top:2px; font-weight:600}
+nav{display:flex; flex-direction:column; gap:3px}
+nav button{
+  all:unset; cursor:pointer; padding:12px 14px; font-size:14.5px; font-weight:700; color:var(--muted);
+  border-radius:var(--radius-sm); display:flex; align-items:center; gap:10px; transition:all .12s;
+}
+nav button .ic{font-size:17px; width:22px; text-align:center}
+nav button:hover{background:var(--surface); color:var(--ink)}
+nav button.on{background:var(--ink); color:var(--surface); box-shadow:var(--shadow-sm)}
+.sidebar-foot{margin-top:auto; padding-top:10px}
+.btn-settings{
+  all:unset; cursor:pointer; font-size:13.5px; font-weight:700; color:var(--muted); padding:12px 14px;
+  border-radius:var(--radius-sm); display:flex; align-items:center; gap:10px; transition:all .12s;
+}
+.btn-settings:hover{background:var(--surface); color:var(--ink)}
+
+/* ---------- MAIN ---------- */
+main{flex:1; padding:28px 36px 100px; max-width:1120px}
+.view{display:none}
+.view.on{display:block}
+.view-head{display:flex; justify-content:space-between; align-items:center; margin-bottom:22px; gap:14px; flex-wrap:wrap}
+.view-head h1{font-size:26px}
+.view-sub{color:var(--muted); font-size:13px; margin-top:3px; font-weight:500}
+
+/* ---------- BOTONES ---------- */
+.btn{
+  all:unset; cursor:pointer; font-size:13.5px; font-weight:700; padding:11px 18px; border-radius:var(--radius-pill);
+  border:1.5px solid var(--border-strong); color:var(--ink); transition:all .12s; display:inline-flex; align-items:center; gap:7px;
+  background:var(--surface);
+}
+.btn:hover{border-color:var(--ink); transform:translateY(-1px); box-shadow:var(--shadow-sm)}
+.btn.primary{background:var(--ink); color:var(--surface); border-color:var(--ink)}
+.btn.primary:hover{opacity:.88}
+.btn.danger{color:var(--danger); border-color:var(--danger-soft)}
+.btn.danger:hover{background:var(--danger-soft); border-color:var(--danger)}
+.btn.ghost{border-color:transparent; background:transparent; color:var(--muted)}
+.btn.ghost:hover{color:var(--ink); background:var(--surface-2); box-shadow:none; transform:none}
+.btn.small{padding:8px 14px; font-size:12.5px}
+.btn:disabled{opacity:.4; cursor:not-allowed; transform:none}
+.icon-btn{all:unset; cursor:pointer; color:var(--muted); padding:6px; border-radius:8px; display:inline-flex}
+.icon-btn:hover{color:var(--ink); background:var(--surface-2)}
+
+/* ---------- CAMPOS ---------- */
+.field{margin-bottom:14px}
+.field label{display:block; margin-bottom:7px}
+.field-row{display:flex; gap:12px}
+.field-row > *{flex:1}
+select, input[type=text], input[type=number], input[type=date], input[type=datetime-local], textarea{
+  width:100%; background:var(--surface-2); border:1.5px solid var(--border); border-radius:var(--radius-sm);
+  padding:11px 13px; font-size:14px; color:var(--ink);
+}
+select:focus, input:focus, textarea:focus{outline:none; border-color:var(--ink); background:var(--surface)}
+textarea{resize:vertical; min-height:70px}
+
+.card{background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); box-shadow:var(--shadow)}
+.empty{color:var(--muted-2); font-size:13px; padding:34px 0; text-align:center; font-weight:600}
+
+/* ---------- CHIPS AMBITO ---------- */
+.chip-row{display:flex; gap:8px; flex-wrap:wrap}
+.chip{
+  all:unset; cursor:pointer; padding:9px 15px 9px 12px; border-radius:var(--radius-pill); font-size:13px; font-weight:700;
+  border:1.5px solid var(--border-strong); color:var(--muted); display:flex; align-items:center; gap:7px; transition:all .12s;
+  background:var(--surface);
+}
+.chip:hover{border-color:var(--ink); color:var(--ink)}
+.chip.on{color:#fff; border-color:transparent}
+
+/* ---------- MODAL ---------- */
+.modal-bg{display:none; position:fixed; inset:0; background:rgba(38,33,29,0.42); z-index:200; align-items:center; justify-content:center; padding:20px; backdrop-filter:blur(2px)}
+.modal-bg.on{display:flex}
+.modal{background:var(--surface); border-radius:24px; padding:28px; width:480px; max-width:100%; max-height:88vh; overflow-y:auto; box-shadow:0 24px 70px rgba(38,33,29,0.28)}
+.modal h2{font-size:20px; margin-bottom:18px}
+.modal-actions{display:flex; justify-content:flex-end; gap:10px; margin-top:20px}
+
+.toast{position:fixed; bottom:24px; right:24px; background:var(--ink); color:var(--surface); padding:13px 20px; border-radius:var(--radius-pill); font-size:13px; font-weight:700; opacity:0; transform:translateY(8px); transition:all .2s; z-index:300; box-shadow:var(--shadow)}
+.toast.on{opacity:1; transform:translateY(0)}
+
+.tab-row{display:flex; gap:4px; margin-bottom:20px; background:var(--surface-2); padding:4px; border-radius:var(--radius-pill); width:fit-content; max-width:100%; overflow-x:auto}
+.tab-btn{all:unset; cursor:pointer; padding:9px 16px; font-size:13px; font-weight:700; color:var(--muted); border-radius:var(--radius-pill); white-space:nowrap}
+.tab-btn.on{background:var(--ink); color:var(--surface)}
+.tab-panel{display:none}
+.tab-panel.on{display:block}
+
+/* ---------- PROYECTOS: tarjetas coloreadas por ámbito ---------- */
+.proj-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:14px}
+.proj-card{
+  border-radius:var(--radius-lg); padding:20px; cursor:pointer; position:relative; overflow:hidden;
+  background:var(--surface); border:1px solid var(--border); box-shadow:var(--shadow); transition:transform .12s;
+}
+.proj-card:hover{transform:translateY(-2px)}
+.proj-card .stripe{position:absolute; top:0; left:0; right:0; height:6px}
+.proj-icon{font-size:22px; margin-bottom:10px; display:inline-block}
+.proj-name{font-size:16px; font-weight:800; letter-spacing:-0.01em}
+.proj-client{font-size:12px; color:var(--muted); font-weight:600; margin-top:2px}
+.proj-foot{display:flex; justify-content:space-between; align-items:center; margin-top:16px}
+.proj-hours{font-family:'JetBrains Mono',monospace; font-weight:700; font-size:14px}
+.proj-status-pill{font-size:10.5px; font-weight:700; padding:4px 10px; border-radius:var(--radius-pill); text-transform:uppercase; letter-spacing:0.03em}
+
+.ambito-filter-row{display:flex; gap:8px; flex-wrap:wrap; margin-bottom:20px}
+
+.back-link{all:unset; cursor:pointer; color:var(--muted); font-size:13.5px; font-weight:700; margin-bottom:14px; display:inline-flex; align-items:center; gap:5px}
+.back-link:hover{color:var(--ink)}
+
+.pd-header{border-radius:var(--radius-lg); padding:24px; margin-bottom:20px; position:relative; overflow:hidden}
+.pd-header .stripe{position:absolute; top:0; left:0; right:0; height:6px}
+.pd-top-row{display:flex; justify-content:space-between; align-items:flex-start; gap:16px; flex-wrap:wrap}
+.pd-title{font-size:24px}
+.pd-meta{font-size:13px; color:var(--muted); font-weight:600; margin-top:4px; display:flex; gap:10px; flex-wrap:wrap; align-items:center}
+.pd-stats{display:flex; gap:22px; margin-top:16px; flex-wrap:wrap}
+.pd-stat .num{font-family:'JetBrains Mono',monospace; font-weight:700; font-size:19px}
+.pd-stat .lbl{font-size:11px; color:var(--muted); font-weight:700; text-transform:uppercase; letter-spacing:0.04em}
+
+/* ---------- TAREAS ---------- */
+.task-card{background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:14px 16px; margin-bottom:10px; box-shadow:var(--shadow-sm)}
+.task-top{display:flex; align-items:flex-start; gap:12px}
+.task-check{all:unset; cursor:pointer; width:22px; height:22px; border-radius:7px; border:2px solid var(--border-strong); flex-shrink:0; display:flex; align-items:center; justify-content:center; margin-top:1px; transition:all .12s}
+.task-check.done{background:var(--ok); border-color:var(--ok); color:#fff}
+.task-main{flex:1; min-width:0}
+.task-title{font-size:14.5px; font-weight:700}
+.task-title.done{text-decoration:line-through; color:var(--muted)}
+.task-desc{font-size:12.5px; color:var(--muted); margin-top:3px}
+.task-tags{display:flex; gap:6px; flex-wrap:wrap; margin-top:9px}
+.tag{font-size:10.5px; font-weight:700; padding:4px 9px; border-radius:var(--radius-pill); background:var(--surface-2); color:var(--muted)}
+.tag.prio-alta{background:var(--danger-soft); color:var(--danger)}
+.tag.deadline-soon{background:#FDF1DC; color:#B9791A}
+.tag.deadline-over{background:var(--danger-soft); color:var(--danger)}
+.task-actions{display:flex; gap:2px; flex-shrink:0}
+
+.etapa-track{display:flex; gap:4px; margin-top:12px}
+.etapa-seg{flex:1; height:5px; border-radius:3px; background:var(--border)}
+.etapa-seg.on{background:var(--ink)}
+
+/* ---------- BRIEF / ACTIVIDAD ---------- */
+.brief-box textarea{min-height:160px}
+.activity-item{display:flex; gap:12px; padding:12px 0; border-bottom:1px solid var(--border)}
+.activity-item:last-child{border-bottom:none}
+.activity-dot{width:9px; height:9px; border-radius:50%; margin-top:6px; flex-shrink:0}
+.activity-dot.nota{background:var(--muted-2)}
+.activity-dot.cambio{background:#4C6FFF}
+.activity-dot.hito{background:var(--ok)}
+.activity-main{flex:1}
+.activity-text{font-size:13.5px}
+.activity-when{font-size:11px; color:var(--muted); font-weight:600; margin-top:3px}
+.activity-add{display:flex; gap:8px; margin-top:16px}
+.activity-add select{flex:0 0 120px}
+.activity-add input{flex:1}
+
+/* ---------- COLABORADORES ---------- */
+.collab-row{display:flex; gap:8px; flex-wrap:wrap; align-items:center}
+.collab-chip{display:flex; align-items:center; gap:6px; background:var(--surface-2); border-radius:var(--radius-pill); padding:6px 12px 6px 8px; font-size:12.5px; font-weight:700}
+.collab-avatar{width:20px; height:20px; border-radius:50%; background:var(--ink); color:#fff; font-size:10px; display:flex; align-items:center; justify-content:center; font-weight:800}
+
+/* ---------- HORAS ---------- */
+.timer-card{border-radius:var(--radius-lg); padding:28px; box-shadow:var(--shadow); margin-bottom:24px; background:var(--surface); border:2px solid var(--border); transition:border-color .2s}
+.timer-card.running{border-color:var(--ambito-color, var(--ink))}
+.timer-display-big{font-family:'JetBrains Mono',monospace; font-size:clamp(42px,7vw,60px); font-weight:700; letter-spacing:-0.01em; text-align:center; margin:8px 0}
+.timer-chain{text-align:center; font-size:13px; font-weight:700; color:var(--muted); margin-bottom:4px}
+.timer-actions-row{display:flex; justify-content:center; gap:10px; margin-top:8px}
+.chain-select-row{display:flex; gap:10px; flex-wrap:wrap; margin-top:14px}
+.chain-select-row select{flex:1; min-width:150px}
+
+.entry-row{display:flex; align-items:center; gap:12px; padding:13px 6px; border-bottom:1px solid var(--border)}
+.entry-row:last-child{border-bottom:none}
+.entry-row .dot{width:8px; height:8px; border-radius:50%; flex-shrink:0}
+.entry-main{flex:1; min-width:0}
+.entry-title{font-size:13.5px; font-weight:700}
+.entry-sub{font-size:11.5px; color:var(--muted); font-weight:600; margin-top:2px}
+.entry-dur{font-family:'JetBrains Mono',monospace; font-weight:700; font-size:13.5px; flex-shrink:0}
+.entry-del{color:var(--muted-2); cursor:pointer; flex-shrink:0}
+.entry-del:hover{color:var(--danger)}
+
+/* ---------- PLAZOS ---------- */
+.deadline-item{display:flex; justify-content:space-between; align-items:center; padding:15px 18px; border-radius:var(--radius); margin-bottom:8px; cursor:pointer; background:var(--surface); border:1px solid var(--border); box-shadow:var(--shadow-sm)}
+.deadline-item:hover{transform:translateX(2px)}
+.deadline-item.overdue{border-color:var(--danger); background:var(--danger-soft)}
+.deadline-item.soon{border-left:4px solid var(--warn)}
+.deadline-info .t{font-size:14px; font-weight:700}
+.deadline-info .p{font-size:11.5px; color:var(--muted); font-weight:600; margin-top:2px}
+.deadline-date{font-family:'JetBrains Mono',monospace; font-size:12px; font-weight:700; white-space:nowrap}
+
+/* ---------- INFORMES ---------- */
+.cards-row{display:grid; grid-template-columns:repeat(auto-fit,minmax(190px,1fr)); gap:12px; margin-bottom:28px}
+.stat-card{padding:18px 20px}
+.stat-num{font-family:'JetBrains Mono',monospace; font-size:26px; font-weight:700}
+.chart-block{margin-bottom:30px}
+.chart-block h3{font-size:13px; text-transform:uppercase; letter-spacing:0.04em; color:var(--muted); margin-bottom:14px; font-weight:800}
+.hbar-row{display:flex; align-items:center; gap:12px; padding:7px 0}
+.hbar-label{width:120px; font-size:12.5px; font-weight:700; flex-shrink:0; display:flex; align-items:center; gap:7px}
+.hbar-track{flex:1; height:14px; background:var(--surface-2); border-radius:8px; overflow:hidden}
+.hbar-fill{height:100%; border-radius:8px}
+.hbar-val{font-family:'JetBrains Mono',monospace; font-size:12px; width:48px; text-align:right; flex-shrink:0; font-weight:600}
+table.report{width:100%; border-collapse:collapse; font-size:13px}
+table.report th{text-align:left; font-size:10.5px; text-transform:uppercase; letter-spacing:0.04em; color:var(--muted); padding:9px 10px; font-weight:800}
+table.report td{padding:11px 10px; border-top:1px solid var(--border)}
+table.report tr:hover td{background:var(--surface-2)}
+.table-scroll{overflow-x:auto; -webkit-overflow-scrolling:touch}
+
+/* ---------- AJUSTES ---------- */
+.settings-section{margin-bottom:28px}
+.settings-section h3{font-size:14px; margin-bottom:12px}
+.ambito-edit-row{display:flex; align-items:center; gap:10px; padding:10px 0; border-bottom:1px solid var(--border)}
+.color-dot{width:16px; height:16px; border-radius:50%; flex-shrink:0}
+
+/* ================= MÓVIL ================= */
+@media(max-width:860px){
+  html{-webkit-text-size-adjust:100%}
+  body{flex-direction:column; padding-bottom:76px}
+  .sidebar{
+    width:100%; height:auto; position:sticky; top:0; z-index:140;
+    flex-direction:row; align-items:center; justify-content:space-between;
+    padding:12px 16px; background:var(--bg);
+  }
+  .brand{padding:0}
+  .sidebar-foot{display:none}
+  nav{
+    position:fixed; left:0; right:0; bottom:0; z-index:150; flex-direction:row;
+    justify-content:space-around; gap:0; background:var(--surface); border-top:1px solid var(--border);
+    padding:8px 6px calc(8px + env(safe-area-inset-bottom)); box-shadow:0 -4px 20px rgba(38,33,29,0.06);
+  }
+  nav button{flex:1; flex-direction:column; gap:3px; font-size:9.5px; padding:8px 2px; border-radius:12px}
+  nav button .ic{font-size:19px; width:auto}
+
+  main{padding:16px 14px 8px}
+  .view-head h1{font-size:21px}
+  .view-head .btn{width:100%; justify-content:center}
+
+  select, input, textarea{font-size:16px; padding:12px}
+  .btn{padding:12px 16px}
+
+  .proj-grid{grid-template-columns:1fr 1fr; gap:10px}
+  .proj-card{padding:15px}
+  .proj-name{font-size:14px}
+
+  .timer-card{padding:20px}
+  .chain-select-row{flex-direction:column}
+  .chain-select-row select{min-width:0}
+  .timer-actions-row{flex-direction:column}
+  .timer-actions-row .btn{width:100%; justify-content:center}
+
+  .pd-header{padding:18px}
+  .pd-stats{gap:16px}
+
+  .task-tags{gap:5px}
+  .activity-add{flex-direction:column}
+  .activity-add select{flex:1}
+
+  .cards-row{grid-template-columns:1fr 1fr; gap:8px}
+  .stat-num{font-size:20px}
+  .hbar-label{width:84px; font-size:11.5px}
+  table.report{min-width:460px}
+
+  .modal-bg{align-items:flex-end; padding:0}
+  .modal{width:100%; border-radius:24px 24px 0 0; max-height:92vh}
+  .modal-actions .btn{flex:1; justify-content:center}
+  .toast{left:16px; right:16px; bottom:88px; text-align:center}
+
+  .entry-row{flex-wrap:wrap}
+}
+@media(max-width:420px){
+  .proj-grid{grid-template-columns:1fr}
+  .cards-row{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<aside class="sidebar">
+  <div class="brand">
+    <div class="name">Horas</div>
+    <div class="sub">Proyectos &amp; tiempo</div>
+  </div>
+  <nav>
+    <button class="nav-btn on" data-view="proyectos"><span class="ic">📁</span>Proyectos</button>
+    <button class="nav-btn" data-view="horas"><span class="ic">⏱️</span>Horas</button>
+    <button class="nav-btn" data-view="plazos"><span class="ic">📅</span>Plazos</button>
+    <button class="nav-btn" data-view="informes"><span class="ic">📊</span>Informes</button>
+  </nav>
+  <div class="sidebar-foot">
+    <button class="btn-settings" id="btn-ajustes"><span class="ic">⚙️</span>Ajustes</button>
+  </div>
+</aside>
+
+<main>
+
+  <!-- ===================== PROYECTOS (lista) ===================== -->
+  <section class="view on" id="view-proyectos">
+    <div class="view-head">
+      <div><h1>Proyectos</h1><div class="view-sub">Organizados por ámbito</div></div>
+      <button class="btn primary" id="btn-new-proyecto">+ Nuevo proyecto</button>
+    </div>
+    <div class="ambito-filter-row" id="ambito-filter-row"></div>
+    <div class="proj-grid" id="proj-grid"></div>
+  </section>
+
+  <!-- ===================== PROYECTO (detalle) ===================== -->
+  <section class="view" id="view-proyecto-detalle">
+    <button class="back-link" id="btn-back-proyectos">← Proyectos</button>
+
+    <div class="pd-header" id="pd-header">
+      <div class="stripe" id="pd-stripe"></div>
+      <div class="pd-top-row">
+        <div>
+          <span class="proj-icon" id="pd-icon"></span>
+          <h1 class="pd-title" id="pd-nombre">—</h1>
+          <div class="pd-meta" id="pd-meta"></div>
+        </div>
+        <div style="display:flex; gap:8px">
+          <select id="pd-estado" class="btn small" style="border-radius:999px; width:auto">
+            <option value="activo">Activo</option>
+            <option value="pausado">Pausado</option>
+            <option value="completado">Completado</option>
+          </select>
+          <button class="icon-btn" id="btn-del-proyecto" title="Eliminar proyecto">🗑️</button>
+        </div>
+      </div>
+      <div class="pd-stats">
+        <div class="pd-stat"><div class="num" id="pd-stat-horas">0h</div><div class="lbl">Horas</div></div>
+        <div class="pd-stat"><div class="num" id="pd-stat-tareas">0</div><div class="lbl">Tareas</div></div>
+        <div class="pd-stat"><div class="num" id="pd-stat-completadas">0%</div><div class="lbl">Completado</div></div>
+      </div>
+    </div>
+
+    <div class="tab-row">
+      <button class="tab-btn on" data-tab="tareas">Tareas</button>
+      <button class="tab-btn" data-tab="brief">Brief</button>
+      <button class="tab-btn" data-tab="actividad">Actividad</button>
+      <button class="tab-btn" data-tab="horas">Horas</button>
+      <button class="tab-btn" data-tab="equipo">Colaboradores</button>
+    </div>
+
+    <div class="tab-panel on" id="tab-tareas">
+      <div style="display:flex; justify-content:flex-end; margin-bottom:14px">
+        <button class="btn small primary" id="btn-new-tarea">+ Tarea</button>
+      </div>
+      <div id="pd-tareas-list"></div>
+    </div>
+
+    <div class="tab-panel" id="tab-brief">
+      <div class="field brief-box">
+        <textarea id="pd-brief" placeholder="Notas iniciales, objetivos, contexto del proyecto…"></textarea>
+      </div>
+      <button class="btn small" id="btn-guardar-brief">Guardar brief</button>
+    </div>
+
+    <div class="tab-panel" id="tab-actividad">
+      <div id="pd-actividad-list"></div>
+      <div class="activity-add">
+        <select id="act-tipo"><option value="nota">📝 Nota</option><option value="cambio">🔄 Cambio</option><option value="hito">🎯 Hito</option></select>
+        <input type="text" id="act-texto" placeholder="Añadir al registro de actividad…">
+        <button class="btn small primary" id="btn-add-actividad">Añadir</button>
+      </div>
+    </div>
+
+    <div class="tab-panel" id="tab-horas">
+      <div style="display:flex; justify-content:flex-end; margin-bottom:14px">
+        <button class="btn small primary" id="btn-add-horas-proyecto">+ Registrar horas</button>
+      </div>
+      <div id="pd-horas-list"></div>
+    </div>
+
+    <div class="tab-panel" id="tab-equipo">
+      <div class="collab-row" id="pd-colaboradores"></div>
+      <div class="field-row" style="margin-top:16px">
+        <select id="sel-add-colaborador"></select>
+        <button class="btn small" id="btn-add-colaborador" style="flex:0 0 auto">Añadir al proyecto</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== HORAS ===================== -->
+  <section class="view" id="view-horas">
+    <div class="view-head">
+      <div><h1>Horas</h1><div class="view-sub">Cronómetro y registro manual</div></div>
+      <button class="btn" id="btn-abrir-manual">+ Entrada manual</button>
+    </div>
+
+    <div class="timer-card" id="timer-card">
+      <div id="timer-setup">
+        <label class="label">Ámbito</label>
+        <div class="chip-row" id="chip-ambitos" style="margin-top:8px"></div>
+        <div class="chain-select-row">
+          <select id="sel-proyecto"><option value="">Proyecto…</option></select>
+          <select id="sel-tarea" disabled><option value="">Tarea (opcional)…</option></select>
+        </div>
+        <div class="timer-actions-row"><button class="btn primary" id="btn-start" disabled>▶ Iniciar cronómetro</button></div>
+      </div>
+      <div id="timer-running" style="display:none">
+        <div class="timer-chain" id="running-chain-text"></div>
+        <div class="timer-display-big mono" id="timer-display">00:00:00</div>
+        <div class="timer-actions-row">
+          <button class="btn primary" id="btn-stop">■ Parar y guardar</button>
+          <button class="btn danger" id="btn-cancel">Descartar</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="filters-bar" style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:14px">
+      <select id="f-ambito"><option value="">Todos los ámbitos</option></select>
+      <input type="date" id="f-desde">
+      <input type="date" id="f-hasta">
+      <button class="btn ghost small" id="f-limpiar">Limpiar</button>
+    </div>
+    <div class="card" style="padding:4px 16px" id="horas-list"></div>
+  </section>
+
+  <!-- ===================== PLAZOS ===================== -->
+  <section class="view" id="view-plazos">
+    <div class="view-head"><div><h1>Plazos</h1><div class="view-sub">Tareas pendientes por fecha límite</div></div></div>
+    <div id="plazos-list"></div>
+  </section>
+
+  <!-- ===================== INFORMES ===================== -->
+  <section class="view" id="view-informes">
+    <div class="view-head"><div><h1>Informes</h1><div class="view-sub">Cómo se reparte tu tiempo</div></div></div>
+    <div class="cards-row" id="informe-cards"></div>
+    <div class="chart-block"><h3>Horas por ámbito</h3><div id="chart-ambitos"></div></div>
+    <div class="chart-block">
+      <h3>Proyectos con más horas</h3>
+      <div class="table-scroll"><table class="report" id="tabla-proyectos"><thead><tr><th>Proyecto</th><th>Ámbito</th><th>Horas</th></tr></thead><tbody></tbody></table></div>
+    </div>
+    <div class="chart-block">
+      <h3>Tareas con más horas</h3>
+      <div class="table-scroll"><table class="report" id="tabla-tareas"><thead><tr><th>Tarea</th><th>Proyecto</th><th>Horas</th></tr></thead><tbody></tbody></table></div>
+    </div>
+  </section>
+
+</main>
+
+<!-- ===================== MODALES ===================== -->
+<div class="modal-bg" id="modal-proyecto">
+  <div class="modal">
+    <h2 id="np-titulo-modal">Nuevo proyecto</h2>
+    <input type="hidden" id="np-id">
+    <div class="field"><label class="label">Ámbito</label><div class="chip-row" id="chip-ambitos-nuevo"></div></div>
+    <div class="field"><label class="label">Nombre</label><input type="text" id="np-nombre"></div>
+    <div class="field" id="np-cliente-wrap" style="display:none"><label class="label">Cliente</label><input type="text" id="np-cliente"></div>
+    <div class="field-row">
+      <div class="field"><label class="label">Fecha de inicio</label><input type="date" id="np-fecha-inicio"></div>
+      <div class="field"><label class="label">Fecha límite (opcional)</label><input type="date" id="np-fecha-limite"></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn ghost" data-close="modal-proyecto">Cancelar</button>
+      <button class="btn primary" id="np-guardar">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-bg" id="modal-tarea">
+  <div class="modal">
+    <h2 id="nt-titulo-modal">Nueva tarea</h2>
+    <input type="hidden" id="nt-id">
+    <div class="field"><label class="label">Título</label><input type="text" id="nt-titulo"></div>
+    <div class="field"><label class="label">Descripción (opcional)</label><textarea id="nt-desc" rows="2"></textarea></div>
+    <div class="field">
+      <label class="label">Etapa</label>
+      <div class="chip-row" id="chip-etapas"></div>
+    </div>
+    <div class="field-row">
+      <div class="field"><label class="label">Prioridad</label>
+        <select id="nt-prioridad"><option value="alta">Alta</option><option value="media" selected>Media</option><option value="baja">Baja</option></select>
+      </div>
+      <div class="field"><label class="label">Fecha límite</label><input type="date" id="nt-fecha"></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn ghost" data-close="modal-tarea">Cancelar</button>
+      <button class="btn primary" id="nt-guardar">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-bg" id="modal-manual">
+  <div class="modal">
+    <h2>Registrar horas</h2>
+    <div class="field"><label class="label">Ámbito</label><div class="chip-row" id="chip-ambitos-manual"></div></div>
+    <div class="field-row">
+      <div class="field"><label class="label">Proyecto</label><select id="man-proyecto"></select></div>
+      <div class="field"><label class="label">Tarea (opcional)</label><select id="man-tarea"><option value="">—</option></select></div>
+    </div>
+    <div class="field-row">
+      <div class="field"><label class="label">Fecha</label><input type="date" id="man-fecha"></div>
+      <div class="field"><label class="label">Horas</label><input type="number" id="man-horas" min="0.25" step="0.25" placeholder="1.5"></div>
+    </div>
+    <div class="field"><label class="label">Descripción</label><input type="text" id="man-desc" placeholder="¿En qué has trabajado?"></div>
+    <div class="modal-actions">
+      <button class="btn ghost" data-close="modal-manual">Cancelar</button>
+      <button class="btn primary" id="man-guardar">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-bg" id="modal-ajustes">
+  <div class="modal" style="width:560px">
+    <h2>Ajustes</h2>
+    <div class="tab-row">
+      <button class="tab-btn on" data-atab="ambitos">Ámbitos</button>
+      <button class="tab-btn" data-atab="colaboradores">Colaboradores</button>
+      <button class="tab-btn" data-atab="datos">Datos</button>
+    </div>
+
+    <div class="tab-panel on" id="atab-ambitos">
+      <div id="ambitos-list" style="margin-bottom:16px"></div>
+      <div class="field-row">
+        <div class="field"><input type="text" id="na-nombre" placeholder="Nombre del ámbito…"></div>
+        <div class="field" style="flex:0 0 56px"><input type="text" id="na-icono" placeholder="🎯" maxlength="2"></div>
+        <div class="field" style="flex:0 0 56px"><input type="color" id="na-color" value="#4C6FFF" style="padding:4px; height:44px"></div>
+      </div>
+      <label style="display:flex; align-items:center; gap:8px; font-size:13px; margin-bottom:14px; font-weight:600">
+        <input type="checkbox" id="na-profesional" style="width:auto"> Ámbito profesional (pide cliente en sus proyectos)
+      </label>
+      <button class="btn small primary" id="na-guardar">+ Añadir ámbito</button>
+    </div>
+
+    <div class="tab-panel" id="atab-colaboradores">
+      <div id="colaboradores-list" style="margin-bottom:16px"></div>
+      <div class="field-row">
+        <div class="field"><input type="text" id="nc-nombre" placeholder="Nombre del colaborador…"></div>
+        <button class="btn small primary" id="nc-guardar" style="flex:0 0 auto">+ Añadir</button>
+      </div>
+    </div>
+
+    <div class="tab-panel" id="atab-datos">
+      <p style="font-size:13px; color:var(--muted); margin-bottom:16px; line-height:1.5">Todos los datos se guardan en este navegador. Usa estas copias de seguridad para no perderlos o para pasarlos a otro dispositivo.</p>
+      <div style="display:flex; gap:10px; flex-wrap:wrap">
+        <button class="btn small" id="btn-export">⬇ Exportar copia de seguridad</button>
+        <button class="btn small" id="btn-import">⬆ Restaurar copia</button>
+        <input type="file" id="file-import" accept="application/json" style="display:none">
+      </div>
+    </div>
+
+    <div class="modal-actions"><button class="btn ghost" data-close="modal-ajustes">Cerrar</button></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ============================================================
+   ALMACÉN — API online (Netlify DB), detrás del muro de acceso
+   ============================================================ */
+const TIMER_KEY = 'horas_v3_timer_activo'; // el cronómetro activo sigue en este navegador, es solo conveniencia local
+
+function uid(){ return Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
+
+function defaultStore(){
+  return {
+    ambitos: [
+      { id:'trabajo', nombre:'Trabajo', icono:'💼', color:'#4C6FFF', profesional:true },
+      { id:'personal', nombre:'Personal', icono:'🌱', color:'#2FA66A', profesional:false },
+      { id:'creativo', nombre:'Creativo', icono:'🎨', color:'#C24FA0', profesional:false },
+      { id:'hogar', nombre:'Hogar', icono:'🏠', color:'#E08A2E', profesional:false }
+    ],
+    proyectos: [], tareas: [], entradas: [], actividad: [], colaboradores: [], proyecto_colaboradores: []
+  };
+}
+let STORE = defaultStore();
+
+async function loadRemote(){
+  try{
+    const res = await fetch('/api/state');
+    if(!res.ok) throw new Error('No se pudo cargar');
+    const data = await res.json();
+    const d = defaultStore();
+    if(data && Object.keys(data).length){
+      STORE = { ...d, ...data, ambitos: data.ambitos && data.ambitos.length ? data.ambitos : d.ambitos };
+    } else {
+      STORE = d; // primera vez: se guarda el estado inicial con los ámbitos por defecto
+      await save();
+    }
+  }catch(e){
+    toast('No se pudo conectar con el servidor');
+  }
+}
+
+let guardando = false;
+async function save(){
+  guardando = true;
+  try{
+    await fetch('/api/state', { method:'PUT', headers:{'Content-Type':'application/json'}, body: JSON.stringify(STORE) });
+  }catch(e){
+    toast('No se pudo guardar — revisa tu conexión');
+  }
+  guardando = false;
+}
+
+
+function getAmbito(id){ return STORE.ambitos.find(a=>a.id===id); }
+function getProyecto(id){ return STORE.proyectos.find(p=>p.id===id); }
+function getTarea(id){ return STORE.tareas.find(t=>t.id===id); }
+function getColaborador(id){ return STORE.colaboradores.find(c=>c.id===id); }
+
+const ETAPAS = [ ['planificacion','📋 Planificación'], ['ejecucion','⚡ Ejecución'], ['revision','🔍 Revisión'], ['cierre','✅ Cierre'] ];
+function etapaLabel(e){ const f = ETAPAS.find(x=>x[0]===e); return f?f[1]:e; }
+function etapaIndex(e){ return Math.max(0, ETAPAS.findIndex(x=>x[0]===e)); }
+
+function toast(msg){ const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('on'); setTimeout(()=>t.classList.remove('on'),2200); }
+function fmtHoras(h){ return (Math.round(h*10)/10) + 'h'; }
+function fmtDurClock(seg){ seg=Math.max(0,Math.round(seg)); const h=Math.floor(seg/3600),m=Math.floor((seg%3600)/60),s=seg%60; return [h,m,s].map(n=>String(n).padStart(2,'0')).join(':'); }
+function fmtFecha(iso){ if(!iso) return '—'; const d=new Date(iso+'T00:00:00'); return d.toLocaleDateString('es-ES',{day:'numeric',month:'short'}); }
+function hoy(){ return new Date().toISOString().slice(0,10); }
+function diasHasta(f){ const h=new Date(); h.setHours(0,0,0,0); const d=new Date(f+'T00:00:00'); return Math.round((d-h)/86400000); }
+
+function openModal(id){ document.getElementById(id).classList.add('on'); }
+function closeModal(id){ document.getElementById(id).classList.remove('on'); }
+document.querySelectorAll('[data-close]').forEach(b=>b.addEventListener('click', ()=>closeModal(b.dataset.close)));
+
+function renderChips(containerId, selectedId, onSelect){
+  const cont = document.getElementById(containerId);
+  cont.innerHTML = STORE.ambitos.map(a => `
+    <button class="chip ${selectedId===a.id?'on':''}" data-ambito="${a.id}" style="${selectedId===a.id?`background:${a.color}`:''}">
+      <span>${a.icono}</span>${a.nombre}
+    </button>`).join('');
+  cont.querySelectorAll('.chip').forEach(el=>el.addEventListener('click', ()=>onSelect(el.dataset.ambito)));
+}
+function renderEtapaChips(selected, onSelect){
+  const cont = document.getElementById('chip-etapas');
+  cont.innerHTML = ETAPAS.map(([id,label])=>`<button type="button" class="chip ${selected===id?'on':''}" data-etapa="${id}" style="${selected===id?'background:#26211D':''}">${label}</button>`).join('');
+  cont.querySelectorAll('.chip').forEach(el=>el.addEventListener('click', ()=>onSelect(el.dataset.etapa)));
+}
+
+/* ============================================================
+   NAVEGACIÓN
+   ============================================================ */
+function irAVista(id){
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('on'));
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('on'));
+  const btn = document.querySelector(`.nav-btn[data-view="${id}"]`);
+  if(btn) btn.classList.add('on');
+  document.getElementById('view-'+id).classList.add('on');
+  if(id==='proyectos') renderProyectos();
+  if(id==='horas') renderHoras();
+  if(id==='plazos') renderPlazos();
+  if(id==='informes') renderInformes();
+}
+document.querySelectorAll('.nav-btn').forEach(btn=>btn.addEventListener('click', ()=>irAVista(btn.dataset.view)));
+document.getElementById('btn-back-proyectos').addEventListener('click', ()=>irAVista('proyectos'));
+
+/* ============================================================
+   PROYECTOS — lista
+   ============================================================ */
+let filtroAmbito = null;
+
+function horasProyecto(pid){ return STORE.entradas.filter(e=>e.proyecto_id===pid).reduce((s,e)=>s+(e.horas||0),0); }
+function tareasProyecto(pid){ return STORE.tareas.filter(t=>t.proyecto_id===pid); }
+
+function renderAmbitoFilterRow(){
+  const cont = document.getElementById('ambito-filter-row');
+  cont.innerHTML = `<button class="chip ${!filtroAmbito?'on':''}" data-f="" style="${!filtroAmbito?'background:#26211D':''}">Todos</button>` +
+    STORE.ambitos.map(a=>`<button class="chip ${filtroAmbito===a.id?'on':''}" data-f="${a.id}" style="${filtroAmbito===a.id?`background:${a.color}`:''}"><span>${a.icono}</span>${a.nombre}</button>`).join('');
+  cont.querySelectorAll('.chip').forEach(el=>el.addEventListener('click', ()=>{ filtroAmbito = el.dataset.f || null; renderProyectos(); }));
+}
+
+function renderProyectos(){
+  renderAmbitoFilterRow();
+  let lista = [...STORE.proyectos];
+  if(filtroAmbito) lista = lista.filter(p=>p.ambito_id===filtroAmbito);
+  const grid = document.getElementById('proj-grid');
+  if(lista.length===0){ grid.innerHTML = '<div class="empty">Todavía no hay proyectos aquí. Crea el primero →</div>'; return; }
+  grid.innerHTML = lista.map(p=>{
+    const a = getAmbito(p.ambito_id);
+    const tareas = tareasProyecto(p.id);
+    const completadas = tareas.filter(t=>t.estado==='completada').length;
+    const pillColors = { activo:['#EAF6EF','#2FA66A'], pausado:['#FDF1DC','#B9791A'], completado:['#EFEFEF','#8f887e'] };
+    const pc = pillColors[p.estado] || pillColors.activo;
+    return `
+    <div class="proj-card" data-open="${p.id}">
+      <div class="stripe" style="background:${a?a.color:'#ccc'}"></div>
+      <div class="proj-icon">${a?a.icono:'📁'}</div>
+      <div class="proj-name">${p.nombre}</div>
+      <div class="proj-client">${p.cliente ? p.cliente : (a?a.nombre:'')}${tareas.length?' · '+completadas+'/'+tareas.length+' tareas':''}</div>
+      <div class="proj-foot">
+        <div class="proj-hours mono">${fmtHoras(horasProyecto(p.id))}</div>
+        <div class="proj-status-pill" style="background:${pc[0]};color:${pc[1]}">${p.estado}</div>
+      </div>
+    </div>`;
+  }).join('');
+  grid.querySelectorAll('[data-open]').forEach(el=>el.addEventListener('click', ()=>abrirProyecto(el.dataset.open)));
+}
+
+/* --- Crear proyecto --- */
+let npAmbito = null;
+function selectNpAmbito(id){
+  npAmbito = id;
+  renderChips('chip-ambitos-nuevo', id, selectNpAmbito);
+  const a = getAmbito(id);
+  document.getElementById('np-cliente-wrap').style.display = a && a.profesional ? 'block' : 'none';
+}
+document.getElementById('btn-new-proyecto').addEventListener('click', ()=>{
+  document.getElementById('np-titulo-modal').textContent = 'Nuevo proyecto';
+  document.getElementById('np-id').value = '';
+  document.getElementById('np-nombre').value = '';
+  document.getElementById('np-cliente').value = '';
+  document.getElementById('np-fecha-inicio').value = hoy();
+  document.getElementById('np-fecha-limite').value = '';
+  selectNpAmbito(filtroAmbito || STORE.ambitos[0].id);
+  openModal('modal-proyecto');
+});
+document.getElementById('np-guardar').addEventListener('click', ()=>{
+  const nombre = document.getElementById('np-nombre').value.trim();
+  if(!nombre){ toast('Falta el nombre'); return; }
+  if(!npAmbito){ toast('Elige un ámbito'); return; }
+  const id = document.getElementById('np-id').value;
+  const payload = {
+    ambito_id: npAmbito, nombre,
+    cliente: getAmbito(npAmbito).profesional ? (document.getElementById('np-cliente').value.trim() || null) : null,
+    fecha_inicio: document.getElementById('np-fecha-inicio').value || null,
+    fecha_limite: document.getElementById('np-fecha-limite').value || null
+  };
+  if(id){ Object.assign(getProyecto(id), payload); }
+  else { STORE.proyectos.push({ id: uid(), estado:'activo', brief:'', ...payload }); }
+  save(); closeModal('modal-proyecto'); renderProyectos(); toast('Proyecto guardado');
+});
+
+/* ============================================================
+   PROYECTO — detalle
+   ============================================================ */
+let proyectoActual = null;
+
+function abrirProyecto(id){
+  proyectoActual = id;
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('on'));
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('on'));
+  document.getElementById('view-proyecto-detalle').classList.add('on');
+  document.querySelectorAll('.tab-btn[data-tab]').forEach(b=>b.classList.remove('on'));
+  document.querySelector('.tab-btn[data-tab="tareas"]').classList.add('on');
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('on'));
+  document.getElementById('tab-tareas').classList.add('on');
+  renderDetalleProyecto();
+}
+document.querySelectorAll('.tab-btn[data-tab]').forEach(btn=>btn.addEventListener('click', ()=>{
+  document.querySelectorAll('.tab-btn[data-tab]').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('on'));
+  document.getElementById('tab-'+btn.dataset.tab).classList.add('on');
+}));
+
+function renderDetalleProyecto(){
+  const p = getProyecto(proyectoActual);
+  if(!p) return;
+  const a = getAmbito(p.ambito_id);
+  document.getElementById('pd-stripe').style.background = a?a.color:'#ccc';
+  document.getElementById('pd-icon').textContent = a?a.icono:'📁';
+  document.getElementById('pd-nombre').textContent = p.nombre;
+  document.getElementById('pd-meta').innerHTML = `${a?a.nombre:''}${p.cliente?' · Cliente: '+p.cliente:''}${p.fecha_limite?' · Límite: '+fmtFecha(p.fecha_limite):''}`;
+  document.getElementById('pd-estado').value = p.estado;
+
+  const tareas = tareasProyecto(p.id);
+  const completadas = tareas.filter(t=>t.estado==='completada').length;
+  document.getElementById('pd-stat-horas').textContent = fmtHoras(horasProyecto(p.id));
+  document.getElementById('pd-stat-tareas').textContent = tareas.length;
+  document.getElementById('pd-stat-completadas').textContent = tareas.length ? Math.round(completadas/tareas.length*100)+'%' : '0%';
+
+  renderTareasProyecto();
+  document.getElementById('pd-brief').value = p.brief || '';
+  renderActividadProyecto();
+  renderHorasProyecto();
+  renderColaboradoresProyecto();
+}
+
+document.getElementById('pd-estado').addEventListener('change', e=>{
+  getProyecto(proyectoActual).estado = e.target.value;
+  save();
+});
+document.getElementById('btn-del-proyecto').addEventListener('click', ()=>{
+  if(!confirm('¿Eliminar este proyecto y todo lo asociado (tareas, horas, actividad)?')) return;
+  const pid = proyectoActual;
+  STORE.proyectos = STORE.proyectos.filter(p=>p.id!==pid);
+  STORE.tareas = STORE.tareas.filter(t=>t.proyecto_id!==pid);
+  STORE.entradas = STORE.entradas.filter(e=>e.proyecto_id!==pid);
+  STORE.actividad = STORE.actividad.filter(a=>a.proyecto_id!==pid);
+  STORE.proyecto_colaboradores = STORE.proyecto_colaboradores.filter(x=>x.proyecto_id!==pid);
+  save(); irAVista('proyectos'); toast('Proyecto eliminado');
+});
+
+/* --- Tareas --- */
+function renderTareasProyecto(){
+  const tareas = tareasProyecto(proyectoActual);
+  const cont = document.getElementById('pd-tareas-list');
+  if(tareas.length===0){ cont.innerHTML = '<div class="empty">Sin tareas todavía</div>'; return; }
+  cont.innerHTML = tareas.map(t=>{
+    const tags = [];
+    tags.push(`<span class="tag">${etapaLabel(t.etapa)}</span>`);
+    if(t.prioridad==='alta') tags.push(`<span class="tag prio-alta">Prioridad alta</span>`);
+    if(t.fecha_limite && t.estado!=='completada'){
+      const d = diasHasta(t.fecha_limite);
+      if(d<0) tags.push(`<span class="tag deadline-over">Venció ${fmtFecha(t.fecha_limite)}</span>`);
+      else if(d<=3) tags.push(`<span class="tag deadline-soon">${d===0?'Hoy':d===1?'Mañana':'En '+d+'d'}</span>`);
+      else tags.push(`<span class="tag">${fmtFecha(t.fecha_limite)}</span>`);
+    }
+    const h = STORE.entradas.filter(e=>e.tarea_id===t.id).reduce((s,e)=>s+(e.horas||0),0);
+    if(h>0) tags.push(`<span class="tag">${fmtHoras(h)}</span>`);
+    return `
+    <div class="task-card">
+      <div class="task-top">
+        <button class="task-check ${t.estado==='completada'?'done':''}" data-toggle="${t.id}">${t.estado==='completada'?'✓':''}</button>
+        <div class="task-main">
+          <div class="task-title ${t.estado==='completada'?'done':''}">${t.titulo}</div>
+          ${t.descripcion?`<div class="task-desc">${t.descripcion}</div>`:''}
+          <div class="task-tags">${tags.join('')}</div>
+        </div>
+        <div class="task-actions">
+          <button class="icon-btn" data-edit="${t.id}">✎</button>
+          <button class="icon-btn" data-del="${t.id}">✕</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+  cont.querySelectorAll('[data-toggle]').forEach(el=>el.addEventListener('click', ()=>{
+    const t = getTarea(el.dataset.toggle);
+    t.estado = t.estado==='completada' ? 'pendiente' : 'completada';
+    save(); renderDetalleProyecto();
+  }));
+  cont.querySelectorAll('[data-edit]').forEach(el=>el.addEventListener('click', ()=>abrirModalTarea(getTarea(el.dataset.edit))));
+  cont.querySelectorAll('[data-del]').forEach(el=>el.addEventListener('click', ()=>{
+    STORE.tareas = STORE.tareas.filter(t=>t.id!==el.dataset.del);
+    STORE.entradas = STORE.entradas.filter(e=>e.tarea_id!==el.dataset.del);
+    save(); renderDetalleProyecto();
+  }));
+}
+
+let ntEtapa = 'planificacion';
+function onEtapaClick(v){ ntEtapa = v; renderEtapaChips(v, onEtapaClick); }
+document.getElementById('btn-new-tarea').addEventListener('click', ()=>abrirModalTarea());
+function abrirModalTarea(t){
+  document.getElementById('nt-titulo-modal').textContent = t ? 'Editar tarea' : 'Nueva tarea';
+  document.getElementById('nt-id').value = t ? t.id : '';
+  document.getElementById('nt-titulo').value = t ? t.titulo : '';
+  document.getElementById('nt-desc').value = t ? (t.descripcion||'') : '';
+  document.getElementById('nt-prioridad').value = t ? t.prioridad : 'media';
+  document.getElementById('nt-fecha').value = t ? (t.fecha_limite||'') : '';
+  ntEtapa = t ? t.etapa : 'planificacion';
+  renderEtapaChips(ntEtapa, onEtapaClick);
+  openModal('modal-tarea');
+}
+document.getElementById('nt-guardar').addEventListener('click', ()=>{
+  const titulo = document.getElementById('nt-titulo').value.trim();
+  if(!titulo){ toast('Falta el título'); return; }
+  const id = document.getElementById('nt-id').value;
+  const payload = {
+    titulo, descripcion: document.getElementById('nt-desc').value.trim() || null,
+    prioridad: document.getElementById('nt-prioridad').value, etapa: ntEtapa,
+    fecha_limite: document.getElementById('nt-fecha').value || null
+  };
+  if(id){ Object.assign(getTarea(id), payload); }
+  else { STORE.tareas.push({ id: uid(), proyecto_id: proyectoActual, estado:'pendiente', ...payload }); }
+  save(); closeModal('modal-tarea'); renderDetalleProyecto(); toast('Tarea guardada');
+});
+
+/* --- Brief --- */
+document.getElementById('btn-guardar-brief').addEventListener('click', ()=>{
+  getProyecto(proyectoActual).brief = document.getElementById('pd-brief').value;
+  save(); toast('Brief guardado');
+});
+
+/* --- Actividad --- */
+function renderActividadProyecto(){
+  const items = STORE.actividad.filter(a=>a.proyecto_id===proyectoActual).sort((a,b)=>new Date(b.fecha)-new Date(a.fecha));
+  const cont = document.getElementById('pd-actividad-list');
+  cont.innerHTML = items.length ? items.map(a=>`
+    <div class="activity-item">
+      <div class="activity-dot ${a.tipo}"></div>
+      <div class="activity-main"><div class="activity-text">${a.texto}</div><div class="activity-when">${new Date(a.fecha).toLocaleString('es-ES',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})}</div></div>
+    </div>`).join('') : '<div class="empty">Sin actividad registrada todavía</div>';
+}
+document.getElementById('btn-add-actividad').addEventListener('click', ()=>{
+  const texto = document.getElementById('act-texto').value.trim();
+  if(!texto) return;
+  STORE.actividad.push({ id: uid(), proyecto_id: proyectoActual, tipo: document.getElementById('act-tipo').value, texto, fecha: new Date().toISOString() });
+  save(); document.getElementById('act-texto').value = ''; renderActividadProyecto();
+});
+
+/* --- Colaboradores por proyecto --- */
+function renderColaboradoresProyecto(){
+  const ids = STORE.proyecto_colaboradores.filter(x=>x.proyecto_id===proyectoActual).map(x=>x.colaborador_id);
+  const cont = document.getElementById('pd-colaboradores');
+  cont.innerHTML = ids.length ? ids.map(cid=>{
+    const c = getColaborador(cid); if(!c) return '';
+    return `<div class="collab-chip"><span class="collab-avatar">${c.nombre.charAt(0).toUpperCase()}</span>${c.nombre}<span class="icon-btn" data-quitar="${cid}" style="cursor:pointer">✕</span></div>`;
+  }).join('') : '<div class="empty">Ningún colaborador asignado</div>';
+  cont.querySelectorAll('[data-quitar]').forEach(el=>el.addEventListener('click', ()=>{
+    STORE.proyecto_colaboradores = STORE.proyecto_colaboradores.filter(x=>!(x.proyecto_id===proyectoActual && x.colaborador_id===el.dataset.quitar));
+    save(); renderColaboradoresProyecto();
+  }));
+  const sel = document.getElementById('sel-add-colaborador');
+  const disponibles = STORE.colaboradores.filter(c=>!ids.includes(c.id));
+  sel.innerHTML = disponibles.length ? disponibles.map(c=>`<option value="${c.id}">${c.nombre}</option>`).join('') : '<option value="">Añade colaboradores en Ajustes</option>';
+}
+document.getElementById('btn-add-colaborador').addEventListener('click', ()=>{
+  const cid = document.getElementById('sel-add-colaborador').value;
+  if(!cid) return;
+  STORE.proyecto_colaboradores.push({ proyecto_id: proyectoActual, colaborador_id: cid });
+  save(); renderColaboradoresProyecto();
+});
+
+/* --- Horas dentro del proyecto --- */
+function renderHorasProyecto(){
+  const entradas = STORE.entradas.filter(e=>e.proyecto_id===proyectoActual).sort((a,b)=>new Date(b.fecha)-new Date(a.fecha));
+  const cont = document.getElementById('pd-horas-list');
+  cont.innerHTML = entradas.length ? entradas.map(e=>renderEntryRow(e)).join('') : '<div class="empty">Sin horas registradas en este proyecto</div>';
+  wireEntryActions(cont, renderDetalleProyecto);
+}
+document.getElementById('btn-add-horas-proyecto').addEventListener('click', ()=>openManualModal(null, proyectoActual));
+
+/* ============================================================
+   ENTRADA REUTILIZABLE (fila de horas)
+   ============================================================ */
+function renderEntryRow(e){
+  const p = getProyecto(e.proyecto_id);
+  const a = p ? getAmbito(p.ambito_id) : null;
+  const t = e.tarea_id ? getTarea(e.tarea_id) : null;
+  return `
+    <div class="entry-row" data-entry="${e.id}">
+      <span class="dot" style="background:${a?a.color:'#ccc'}"></span>
+      <div class="entry-main">
+        <div class="entry-title">${p?p.nombre:'—'}${t?' · '+t.titulo:''}</div>
+        <div class="entry-sub">${fmtFecha(e.fecha)}${e.descripcion?' · '+e.descripcion:''}</div>
+      </div>
+      <div class="entry-dur mono">${fmtHoras(e.horas)}</div>
+      <span class="entry-del" data-edit="${e.id}" title="Editar">✎</span>
+      <span class="entry-del" data-del="${e.id}" title="Eliminar">✕</span>
+    </div>`;
+}
+function wireEntryActions(container, afterChange){
+  container.querySelectorAll('[data-del]').forEach(el=>el.addEventListener('click', ()=>{
+    STORE.entradas = STORE.entradas.filter(x=>x.id!==el.dataset.del);
+    save(); afterChange();
+  }));
+  container.querySelectorAll('[data-edit]').forEach(el=>el.addEventListener('click', ()=>{
+    const e = STORE.entradas.find(x=>x.id===el.dataset.edit);
+    openManualModal(e, e.proyecto_id);
+  }));
+}
+
+/* ============================================================
+   HORAS — vista global (cronómetro + manual + listado)
+   ============================================================ */
+let setupAmbito = null, timerInterval = null;
+
+function populateProyectoSelect(sel, ambitoId){
+  sel.innerHTML = '<option value="">Proyecto…</option>' + STORE.proyectos.filter(p=>p.ambito_id===ambitoId).map(p=>`<option value="${p.id}">${p.nombre}</option>`).join('');
+}
+function populateTareaSelect(sel, proyectoId, opcional){
+  if(!proyectoId){ sel.innerHTML = `<option value="">Tarea${opcional?' (opcional)':''}…</option>`; sel.disabled = true; return; }
+  sel.disabled = false;
+  sel.innerHTML = `<option value="">Tarea${opcional?' (opcional)':''}…</option>` + STORE.tareas.filter(t=>t.proyecto_id===proyectoId).map(t=>`<option value="${t.id}">${t.titulo}</option>`).join('');
+}
+
+function selectSetupAmbito(id){
+  setupAmbito = id;
+  renderChips('chip-ambitos', id, selectSetupAmbito);
+  populateProyectoSelect(document.getElementById('sel-proyecto'), id);
+  document.getElementById('btn-start').disabled = STORE.proyectos.filter(p=>p.ambito_id===id).length === 0;
+}
+document.getElementById('sel-proyecto').addEventListener('change', e=>populateTareaSelect(document.getElementById('sel-tarea'), e.target.value, true));
+
+function renderHoras(){
+  renderChips('chip-ambitos', setupAmbito, selectSetupAmbito);
+  pobladoFiltroAmbito();
+  renderListaHoras();
+}
+
+document.getElementById('btn-start').addEventListener('click', ()=>{
+  const proyectoId = document.getElementById('sel-proyecto').value;
+  if(!proyectoId){ toast('Elige un proyecto'); return; }
+  const entrada = { ambito_id: setupAmbito, proyecto_id: proyectoId, tarea_id: document.getElementById('sel-tarea').value || null, inicio: new Date().toISOString() };
+  startTimerUI(entrada);
+  localStorage.setItem(TIMER_KEY, JSON.stringify(entrada));
+});
+function startTimerUI(entrada){
+  window.currentTimer = entrada;
+  document.getElementById('timer-setup').style.display = 'none';
+  document.getElementById('timer-running').style.display = 'block';
+  const card = document.getElementById('timer-card');
+  card.classList.add('running');
+  const a = getAmbito(entrada.ambito_id), p = getProyecto(entrada.proyecto_id), t = entrada.tarea_id ? getTarea(entrada.tarea_id) : null;
+  card.style.setProperty('--ambito-color', a?a.color:'#26211D');
+  document.getElementById('running-chain-text').textContent = `${a?a.icono:''} ${p?p.nombre:''}${t?' · '+t.titulo:''}`;
+  tick(); timerInterval = setInterval(tick, 1000);
+}
+function tick(){
+  if(!window.currentTimer) return;
+  const seg = (Date.now() - new Date(window.currentTimer.inicio).getTime())/1000;
+  document.getElementById('timer-display').textContent = fmtDurClock(seg);
+}
+function resetTimerUI(){
+  clearInterval(timerInterval); window.currentTimer = null;
+  document.getElementById('timer-card').classList.remove('running');
+  document.getElementById('timer-setup').style.display = 'block';
+  document.getElementById('timer-running').style.display = 'none';
+  localStorage.removeItem(TIMER_KEY);
+}
+document.getElementById('btn-stop').addEventListener('click', ()=>{
+  if(!window.currentTimer) return;
+  const horas = Math.round(((Date.now() - new Date(window.currentTimer.inicio).getTime())/3600000)*100)/100;
+  STORE.entradas.push({ id: uid(), proyecto_id: window.currentTimer.proyecto_id, tarea_id: window.currentTimer.tarea_id, fecha: hoy(), horas: Math.max(0.01,horas), descripcion: null });
+  save(); resetTimerUI(); renderListaHoras(); toast('Guardado: ' + fmtHoras(horas));
+});
+document.getElementById('btn-cancel').addEventListener('click', ()=>{ resetTimerUI(); toast('Descartado'); });
+
+(function resumeActiveTimer(){
+  const raw = localStorage.getItem(TIMER_KEY);
+  if(!raw) return;
+  try{ startTimerUI(JSON.parse(raw)); }catch(e){}
+})();
+
+/* --- Modal manual (crear/editar) --- */
+let manAmbito = null, manEditId = null;
+function selectManAmbito(id){
+  manAmbito = id;
+  renderChips('chip-ambitos-manual', id, selectManAmbito);
+  populateProyectoSelect(document.getElementById('man-proyecto'), id);
+}
+document.getElementById('man-proyecto').addEventListener('change', e=>populateTareaSelect(document.getElementById('man-tarea'), e.target.value, true));
+document.getElementById('btn-abrir-manual').addEventListener('click', ()=>openManualModal());
+function openManualModal(entrada, proyectoIdFijo){
+  manEditId = entrada ? entrada.id : null;
+  const proyectoId = entrada ? entrada.proyecto_id : proyectoIdFijo;
+  const ambitoId = proyectoId ? getProyecto(proyectoId).ambito_id : STORE.ambitos[0].id;
+  selectManAmbito(ambitoId);
+  if(proyectoId){
+    document.getElementById('man-proyecto').value = proyectoId;
+    populateTareaSelect(document.getElementById('man-tarea'), proyectoId, true);
+    if(entrada && entrada.tarea_id) document.getElementById('man-tarea').value = entrada.tarea_id;
+  }
+  document.getElementById('man-fecha').value = entrada ? entrada.fecha : hoy();
+  document.getElementById('man-horas').value = entrada ? entrada.horas : '';
+  document.getElementById('man-desc').value = entrada ? (entrada.descripcion||'') : '';
+  openModal('modal-manual');
+}
+document.getElementById('man-guardar').addEventListener('click', ()=>{
+  const proyectoId = document.getElementById('man-proyecto').value;
+  const fecha = document.getElementById('man-fecha').value;
+  const horas = parseFloat(document.getElementById('man-horas').value);
+  if(!proyectoId || !fecha || !horas){ toast('Completa proyecto, fecha y horas'); return; }
+  const payload = { proyecto_id: proyectoId, tarea_id: document.getElementById('man-tarea').value || null, fecha, horas, descripcion: document.getElementById('man-desc').value.trim() || null };
+  if(manEditId){ Object.assign(STORE.entradas.find(e=>e.id===manEditId), payload); }
+  else { STORE.entradas.push({ id: uid(), ...payload }); }
+  save(); closeModal('modal-manual');
+  renderListaHoras();
+  if(document.getElementById('view-proyecto-detalle').classList.contains('on')) renderDetalleProyecto();
+  toast('Horas guardadas');
+});
+
+/* --- Filtros + listado --- */
+function pobladoFiltroAmbito(){
+  const sel = document.getElementById('f-ambito'); const actual = sel.value;
+  sel.innerHTML = '<option value="">Todos los ámbitos</option>' + STORE.ambitos.map(a=>`<option value="${a.id}">${a.icono} ${a.nombre}</option>`).join('');
+  sel.value = actual;
+}
+['f-ambito','f-desde','f-hasta'].forEach(id=>document.getElementById(id).addEventListener('change', renderListaHoras));
+document.getElementById('f-limpiar').addEventListener('click', ()=>{
+  document.getElementById('f-ambito').value=''; document.getElementById('f-desde').value=''; document.getElementById('f-hasta').value='';
+  renderListaHoras();
+});
+function renderListaHoras(){
+  const ambito = document.getElementById('f-ambito').value, desde = document.getElementById('f-desde').value, hasta = document.getElementById('f-hasta').value;
+  let lista = [...STORE.entradas];
+  if(ambito) lista = lista.filter(e=>{ const p=getProyecto(e.proyecto_id); return p && p.ambito_id===ambito; });
+  if(desde) lista = lista.filter(e=>e.fecha >= desde);
+  if(hasta) lista = lista.filter(e=>e.fecha <= hasta);
+  lista.sort((a,b)=>new Date(b.fecha)-new Date(a.fecha));
+  const cont = document.getElementById('horas-list');
+  cont.innerHTML = lista.length ? lista.map(e=>renderEntryRow(e)).join('') : '<div class="empty">Sin entradas con estos filtros</div>';
+  wireEntryActions(cont, renderListaHoras);
+}
+
+/* ============================================================
+   PLAZOS
+   ============================================================ */
+function renderPlazos(){
+  const pendientes = STORE.tareas.filter(t=>t.estado!=='completada' && t.fecha_limite);
+  pendientes.sort((a,b)=>new Date(a.fecha_limite)-new Date(b.fecha_limite));
+  const cont = document.getElementById('plazos-list');
+  if(pendientes.length===0){ cont.innerHTML = '<div class="empty">Sin plazos pendientes 🎉</div>'; return; }
+  cont.innerHTML = pendientes.map(t=>{
+    const p = getProyecto(t.proyecto_id); const a = p ? getAmbito(p.ambito_id) : null;
+    const d = diasHasta(t.fecha_limite);
+    const cls = d<0 ? 'overdue' : (d<=3 ? 'soon' : '');
+    const texto = d<0 ? `Hace ${Math.abs(d)}d` : d===0 ? 'Hoy' : d===1 ? 'Mañana' : `En ${d}d`;
+    return `
+      <div class="deadline-item ${cls}" data-open="${t.proyecto_id}">
+        <div class="deadline-info"><div class="t">${a?a.icono+' ':''}${t.titulo}</div><div class="p">${p?p.nombre:''}</div></div>
+        <div class="deadline-date">${texto}</div>
+      </div>`;
+  }).join('');
+  cont.querySelectorAll('[data-open]').forEach(el=>el.addEventListener('click', ()=>abrirProyecto(el.dataset.open)));
+}
+
+/* ============================================================
+   INFORMES
+   ============================================================ */
+function renderInformes(){
+  const totalHoras = STORE.entradas.reduce((s,e)=>s+(e.horas||0),0);
+  const porAmbito = {};
+  STORE.entradas.forEach(e=>{ const p=getProyecto(e.proyecto_id); if(!p) return; porAmbito[p.ambito_id]=(porAmbito[p.ambito_id]||0)+(e.horas||0); });
+  const totalTareas = STORE.tareas.length;
+  const completadas = STORE.tareas.filter(t=>t.estado==='completada').length;
+
+  document.getElementById('informe-cards').innerHTML = `
+    <div class="card stat-card"><div class="label">Horas totales</div><div class="stat-num">${fmtHoras(totalHoras)}</div></div>
+    <div class="card stat-card"><div class="label">Proyectos</div><div class="stat-num">${STORE.proyectos.length}</div></div>
+    <div class="card stat-card"><div class="label">Tareas completadas</div><div class="stat-num">${totalTareas?Math.round(completadas/totalTareas*100):0}%</div></div>
+    <div class="card stat-card"><div class="label">Colaboradores</div><div class="stat-num">${STORE.colaboradores.length}</div></div>
+  `;
+
+  const maxA = Math.max(1, ...Object.values(porAmbito));
+  document.getElementById('chart-ambitos').innerHTML = STORE.ambitos.map(a=>{
+    const h = porAmbito[a.id]||0;
+    return `<div class="hbar-row">
+      <div class="hbar-label"><span>${a.icono}</span>${a.nombre}</div>
+      <div class="hbar-track"><div class="hbar-fill" style="width:${(h/maxA)*100}%; background:${a.color}"></div></div>
+      <div class="hbar-val mono">${fmtHoras(h)}</div>
+    </div>`;
+  }).join('') || '<div class="empty">Sin datos</div>';
+
+  const porProyecto = {};
+  STORE.entradas.forEach(e=>{ porProyecto[e.proyecto_id]=(porProyecto[e.proyecto_id]||0)+(e.horas||0); });
+  const filasP = Object.entries(porProyecto).sort((a,b)=>b[1]-a[1]).slice(0,10);
+  document.querySelector('#tabla-proyectos tbody').innerHTML = filasP.length ? filasP.map(([pid,h])=>{
+    const p = getProyecto(pid); const a = p?getAmbito(p.ambito_id):null;
+    return `<tr><td>${p?p.nombre:'—'}</td><td>${a?a.icono+' '+a.nombre:'—'}</td><td>${fmtHoras(h)}</td></tr>`;
+  }).join('') : '<tr><td colspan="3" class="empty">Sin datos</td></tr>';
+
+  const porTarea = {};
+  STORE.entradas.forEach(e=>{ if(e.tarea_id) porTarea[e.tarea_id]=(porTarea[e.tarea_id]||0)+(e.horas||0); });
+  const filasT = Object.entries(porTarea).sort((a,b)=>b[1]-a[1]).slice(0,10);
+  document.querySelector('#tabla-tareas tbody').innerHTML = filasT.length ? filasT.map(([tid,h])=>{
+    const t = getTarea(tid); const p = t?getProyecto(t.proyecto_id):null;
+    return `<tr><td>${t?t.titulo:'—'}</td><td>${p?p.nombre:'—'}</td><td>${fmtHoras(h)}</td></tr>`;
+  }).join('') : '<tr><td colspan="3" class="empty">Sin datos</td></tr>';
+}
+
+/* ============================================================
+   AJUSTES
+   ============================================================ */
+document.getElementById('btn-ajustes').addEventListener('click', ()=>{ renderAjustes(); openModal('modal-ajustes'); });
+document.querySelectorAll('.tab-btn[data-atab]').forEach(btn=>btn.addEventListener('click', ()=>{
+  document.querySelectorAll('.tab-btn[data-atab]').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  document.querySelectorAll('#modal-ajustes .tab-panel').forEach(p=>p.classList.remove('on'));
+  document.getElementById('atab-'+btn.dataset.atab).classList.add('on');
+}));
+
+function renderAjustes(){
+  document.getElementById('ambitos-list').innerHTML = STORE.ambitos.map(a=>`
+    <div class="ambito-edit-row">
+      <span class="color-dot" style="background:${a.color}"></span>
+      <span style="width:22px">${a.icono}</span>
+      <div style="flex:1"><div style="font-size:13px;font-weight:700">${a.nombre}</div><div style="font-size:11px;color:var(--muted)">${a.profesional?'Profesional · pide cliente':'Personal'}</div></div>
+      <button class="icon-btn" data-del-ambito="${a.id}">✕</button>
+    </div>`).join('');
+  document.querySelectorAll('[data-del-ambito]').forEach(el=>el.addEventListener('click', ()=>{
+    const id = el.dataset.delAmbito;
+    if(STORE.proyectos.some(p=>p.ambito_id===id)){ toast('No se puede borrar: tiene proyectos'); return; }
+    STORE.ambitos = STORE.ambitos.filter(a=>a.id!==id);
+    save(); renderAjustes();
+  }));
+
+  document.getElementById('colaboradores-list').innerHTML = STORE.colaboradores.length ? STORE.colaboradores.map(c=>`
+    <div class="ambito-edit-row">
+      <span class="collab-avatar">${c.nombre.charAt(0).toUpperCase()}</span>
+      <div style="flex:1;font-size:13px;font-weight:700">${c.nombre}</div>
+      <button class="icon-btn" data-del-colab="${c.id}">✕</button>
+    </div>`).join('') : '<div class="empty">Sin colaboradores todavía</div>';
+  document.querySelectorAll('[data-del-colab]').forEach(el=>el.addEventListener('click', ()=>{
+    STORE.colaboradores = STORE.colaboradores.filter(c=>c.id!==el.dataset.delColab);
+    STORE.proyecto_colaboradores = STORE.proyecto_colaboradores.filter(x=>x.colaborador_id!==el.dataset.delColab);
+    save(); renderAjustes();
+  }));
+}
+document.getElementById('na-guardar').addEventListener('click', ()=>{
+  const nombre = document.getElementById('na-nombre').value.trim();
+  if(!nombre){ toast('Falta el nombre'); return; }
+  STORE.ambitos.push({ id: uid(), nombre, icono: document.getElementById('na-icono').value.trim() || '🎯', color: document.getElementById('na-color').value, profesional: document.getElementById('na-profesional').checked });
+  save();
+  document.getElementById('na-nombre').value=''; document.getElementById('na-icono').value=''; document.getElementById('na-profesional').checked=false;
+  renderAjustes(); toast('Ámbito añadido');
+});
+document.getElementById('nc-guardar').addEventListener('click', ()=>{
+  const nombre = document.getElementById('nc-nombre').value.trim();
+  if(!nombre) return;
+  STORE.colaboradores.push({ id: uid(), nombre });
+  save(); document.getElementById('nc-nombre').value=''; renderAjustes(); toast('Colaborador añadido');
+});
+
+/* --- Backup / restauración --- */
+document.getElementById('btn-export').addEventListener('click', ()=>{
+  const blob = new Blob([JSON.stringify(STORE, null, 2)], { type:'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'horas_backup_' + hoy() + '.json';
+  a.click();
+});
+document.getElementById('btn-import').addEventListener('click', ()=>document.getElementById('file-import').click());
+document.getElementById('file-import').addEventListener('change', e=>{
+  const file = e.target.files[0]; if(!file) return;
+  const reader = new FileReader();
+  reader.onload = () => {
+    try{
+      const data = JSON.parse(reader.result);
+      if(!confirm('Esto sustituye todos los datos actuales por los del archivo. ¿Continuar?')) return;
+      STORE = { ...defaultStore(), ...data };
+      save();
+      renderAjustes(); renderProyectos();
+      toast('Datos restaurados');
+    }catch(err){ toast('Archivo no válido'); }
+  };
+  reader.readAsText(file);
+});
+
+/* ============================================================
+   ARRANQUE
+   ============================================================ */
+(async function boot(){
+  await loadRemote();
+  renderProyectos();
+})();
+</script>
+</body>
+</html>
+

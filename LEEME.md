@@ -1,5 +1,17 @@
 # Horas — con backend y muro de acceso
 
+## Sobre el fallo de migración
+
+Se debía a que ya tenías aplicada una migración `001_init` de una versión anterior
+(la de clientes/proyectos/tareas) y yo la había sobrescrito con contenido distinto.
+Netlify no permite editar una migración ya aplicada — lo correcto es dejarla como
+estaba y añadir el cambio de esquema en una migración nueva, que es lo que hay ahora:
+`001_init` (igual que antes) + `002_document_store` (pasa al documento único).
+
+**Importante:** `002_document_store` borra las tablas antiguas (`clientes`, `proyectos`,
+`tareas`, `entradas_tiempo`). Si habías llegado a introducir datos de prueba con
+alguna versión anterior conectada a esta base de datos, se perderán al desplegar esto.
+
 ## El muro de acceso
 
 Contraseña: **CIbhMKCMVzmfhXBA**
